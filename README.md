@@ -1,23 +1,27 @@
 # ML-4-B
 
 ## 1 Introduction
-- Motivation
-- Define your research question
-- How is this document structured
+### Motivation
+- Angebliche 72% Pünktlichkeit der ICEs
+- Gefühl immer die falschen ICEs zu erwischen
+- Gezielt Zugbindung aufheben (strategisch den falschen Zug buchen)
+### Research question
+- Lassen sich Verspätungen und Ausfälle der ICEs anhand von Daten über vergangene Zugfahrten und Wetterdaten vorhersagen?
+### How is this document structured
 ## 2 Related Work
-- What have others done in your area of work/ to answer similar questions?
-- Discussing existing work in the context of your work
+- [David Kriesel](https://www.dkriesel.com/blog/2019/1229_video_und_folien_meines_36c3-vortrags_bahnmining)
+- Projekt von [Theo Döllmann](https://gitlab.com/bahnvorhersage/bahnvorhersage)
+- [Bahnvorhersagen.de](https://bahnvorhersage.de/blog)
 ## 3 Methodology
 ### 3.1 General Methodology
-- How did you proceed to achieve your project goals? 
-- Describe which steps you have undertaken
-- Aim: Others should understand your research process
-### 3.2 Data Understanding and Preparation
-- Introduce the dataset to the reader
-- Describe structure and size of your dataset
-- Describe specialities
-- Describe how you prepare the dataset for your project
-### 3.3 Modeling and Evaluation
+- Suche auf GitHub und GitLab nach bereits existierenden Projekten
+### 3.2. Data Collection
+- Keine Historischen Daten für Zugfahren über Deutsche Bahn API abrufbar
+- Daten aus GitHub von [piebro](https://github.com/piebro/deutsche-bahn-data)
+- Wetterdaten über API mit einem Call pro Bahnhof, stündliche Wetterdaten für große Fernverkehrsbahnhöfe
+### 3.3 Data Understanding and Preparation
+- Date exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration.ipynb)
+### 3.4 Modeling and Evaluation
 - Describe the model architecture(s) you selected
 - Describe how you train your models
 - Describe how you evaluate your models/ which metrics you use
