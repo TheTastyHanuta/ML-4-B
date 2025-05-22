@@ -1,0 +1,4 @@
+node_modules
+/src/weatherdata/data_scraping/node_modules/
+/src/weatherdata/stationsextraction/node_modules/
+.DS_Store

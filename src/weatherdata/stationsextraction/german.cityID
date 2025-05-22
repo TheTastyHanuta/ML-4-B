@@ -1,0 +1,33 @@
+const fs = require('fs');
+
+// Pfad zur Eingabedatei
+const inputFile = 'city.list.json';
+// Pfad zur Ausgabedatei
+const outputFile = 'german.city.list.json';
+
+// Einlesen und Parsen der JSON-Datei
+fs.readFile(inputFile, 'utf8', (err, data) => {
+    if (err) {
+        console.error('Fehler beim Lesen der Datei:', err);
+        return;
+    }
+
+    try {
+        const allLocations = JSON.parse(data);
+
+        // Filter für Einträge mit country === "DE"
+        const germanLocations = allLocations.filter(location => location.country === "DE");
+
+        // Schreiben in die neue Datei
+        fs.writeFile(outputFile, JSON.stringify(germanLocations, null, 2), 'utf8', (err) => {
+            if (err) {
+                console.error('Fehler beim Schreiben der Datei:', err);
+                return;
+            }
+            console.log(`Erfolgreich ${germanLocations.length} deutsche Einträge in "${outputFile}" gespeichert.`);
+        });
+
+    } catch (parseError) {
+        console.error('Fehler beim Parsen der JSON-Datei:', parseError);
+    }
+});
