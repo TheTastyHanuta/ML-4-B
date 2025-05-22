@@ -8,7 +8,7 @@ city_name = "Nuremberg"
 country_code = "DE"
 start = 1716383627
 end = 1747832367
-cnt = 168
+cnt = 1
 
 
 # request = f"https://history.openweathermap.org/data/2.5/history/city?q={city_name},{country_code}&type=hour&start={start}&end={end}&appid={key}"
