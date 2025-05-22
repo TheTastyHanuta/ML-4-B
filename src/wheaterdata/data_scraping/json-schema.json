@@ -1,0 +1,30 @@
+{
+    "name_of_city": [
+        {
+            "dt": "time_of_measurement: number",
+            "main": {
+                "temp": "temperature in kelvin: float",
+                "feels_like": "temperature in kelvin: float",
+                "pressure": "air-pressure in hPa: integer",
+                "humidity": "humidity in percent: integer",
+                "temp_min": "min-temperature in kelvin: float",
+                "temp_max": "max-temperature in kelvin: float"
+            },
+            "wind": {
+                "speed": "wind-speed in unknown: float",
+                "deg": "wind-angle in degrees: number"
+            },
+            "clouds": {
+                "all": "i don't know what this is about: number"
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "one-word description of weather: string",
+                    "description": "more-word description of weather: string",
+                    "icon": "id of the appripriate icon: string"
+                }
+            ]
+        }
+    ]
+}
