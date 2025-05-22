@@ -1,1 +1,3 @@
 node_modules
+/src/wheaterdata/data_scraping/node_modules/
+/src/wheaterdata/stationsextraction/node_modules/
