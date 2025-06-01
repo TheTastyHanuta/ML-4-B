@@ -11,7 +11,7 @@ st.title("Deutsche Bahn – Gesamtübersicht")
 # Read and display json data with cacheing
 @st.cache_data
 def load_json_data():
-    with open("data/data.json", "r") as file:
+    with open("../../data/streamlit_data/data.json", "r") as file:
         return json.load(file)
 
 data = load_json_data()
@@ -22,13 +22,13 @@ st.json(data)
 
 # Display the images from data folder
 st.image(
-    "data/cumulative_distribution.png",
+    "../../data/streamlit_data/cumulative_distribution.png",
     caption="Deutsche Bahn – Kumulative Verteilung",
     use_container_width=True,
 )
 
 st.image(
-    "data/delay_distribution.png",
+    "../../data/streamlit_data/delay_distribution.png",
     caption="Deutsche Bahn – Delay-Verteilung",
     use_container_width=True,
 )

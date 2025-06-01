@@ -23,7 +23,7 @@ LABELS = [
 
 def compute_all():
     data_dir = "../../../data"
-    save_dir = "../data"
+    save_dir = "../../../data/streamlit_data"
     # Read parquet files
     data_dir = Path(data_dir)
     print(f"Reading data from {data_dir}")
