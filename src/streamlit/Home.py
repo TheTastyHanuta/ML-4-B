@@ -1,6 +1,7 @@
 # Create streamlit home page
 import streamlit as st
 import json
+from pathlib import Path
 
 st.set_page_config(
     page_title="DB-Statistik – Übersicht",
@@ -8,10 +9,13 @@ st.set_page_config(
 )
 st.title("Deutsche Bahn – Gesamtübersicht")
 
+# Define the path to the data directory
+path = Path(__file__).parent.parent.parent / "data/streamlit_data"
+
 # Read and display json data with cacheing
 @st.cache_data
 def load_json_data():
-    with open("../../data/streamlit_data/data.json", "r") as file:
+    with open(path / "data.json", "r") as file:
         return json.load(file)
 
 data = load_json_data()
@@ -22,13 +26,13 @@ st.json(data)
 
 # Display the images from data folder
 st.image(
-    "../../data/streamlit_data/cumulative_distribution.png",
+    path / "cumulative_distribution.png",
     caption="Deutsche Bahn – Kumulative Verteilung",
     use_container_width=True,
 )
 
 st.image(
-    "../../data/streamlit_data/delay_distribution.png",
+    path / "delay_distribution.png",
     caption="Deutsche Bahn – Delay-Verteilung",
     use_container_width=True,
 )
