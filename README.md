@@ -8,6 +8,38 @@
 ### Research question
 - Lassen sich Verspätungen und Ausfälle der ICEs anhand von Daten über vergangene Zugfahrten und Wetterdaten vorhersagen?
 ### How is this document structured
+### Project tree
+```plaintext
+ML-4-B
+├── data
+│   ├── bahn_data
+│   ├── streamlit_data
+│   └── weather_data
+├── src
+│   ├── exploration
+│   │   ├── exploration.ipynb
+│   │   └── weather_exploration.ipynb
+│   ├── ml_models
+│   │   ├── data_preparation.py
+│   │   ├── train.py
+│   │   └── xgboost_classifier.py
+│   ├── streamlit
+│   │   ├── calulcations
+│   │   │   ├── overview.py 
+│   │   │   └── direct_train.py
+│   │   └── Home.py
+│   ├── weatherdata
+│   │   ├── data_scraping
+│   │   │   ├── scrapedData
+│   │   │   ├── json-schema.json
+│   │   │   └── scraping.js
+│   │   ├── stationsextraction
+│   │   └── testing
+│   └── __init__.py
+├── requirements.txt
+├── README.md
+└── LICENSE
+```
 ## 2 Related Work
 - [David Kriesel](https://www.dkriesel.com/blog/2019/1229_video_und_folien_meines_36c3-vortrags_bahnmining)
 - Projekt von [Theo Döllmann](https://gitlab.com/bahnvorhersage/bahnvorhersage)
@@ -16,11 +48,11 @@
 ### 3.1 General Methodology
 - Suche auf GitHub und GitLab nach bereits existierenden Projekten
 ### 3.2. Data Collection
-- Keine Historischen Daten für Zugfahren über Deutsche Bahn API abrufbar
+- Keine historischen Daten für Zugfahren über Deutsche Bahn API abrufbar
 - Daten aus GitHub von [piebro](https://github.com/piebro/deutsche-bahn-data)
 - Wetterdaten über API mit einem Call pro Bahnhof, stündliche Wetterdaten für große Fernverkehrsbahnhöfe
 
-#### Donnerstag 22.05.2025
+#### Donnerstag, 22.05.2025
 - **Ziel:** Über eine API stündliche Wetterdaten aus der Vergangenheit für alle 107 Fernverkehrsbahnhöfe in Deutschland abrufen  
 - Die API erlaubt es, genau 1 Jahr in die Vergangenheit zurückzugehen  
 - Pro Anfrage erhalten wir 168 Datensätze = 7 Tage stündliche Wetterdaten  
@@ -44,9 +76,27 @@
 - Ziel: Sicherstellen, dass **alle** verfügbaren Daten abgeholt werden
 
 ### 3.3 Data Understanding and Preparation
-- Date exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration.ipynb)
+- Bahn Data exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration/exploration.ipynb)
+- Wetter Data exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration/exploration.ipynb)
+- Data preparation:
+    - Wetterdaten in DataFrame umwandeln
+    - Bahndaten und Wetterdaten zusammenführen
+    - Feature Engineering: 
+        - Wetterdaten in relevante Features umwandeln (z.B. Temperatur, Niederschlag)
+        - Zeitstempel in Datetime-Format umwandeln
+        - Fehlende Werte behandeln
+        - Normalisierung der Daten
+        - Weitere Spalten hinzufügen (z.B. Wochentag, Feiertag)
+        - Kategorische Variablen in numerische umwandeln
+        - Unnötige Spalten entfernen (`train_line_ride_id`, `train_type`)
+        - Alle Fahrten die nicht ICE sind entfernen
+    - Feature Selection:
+        - Relevante Features auswählen (z.B. Temperatur, Niederschlag, Wochentag, Feiertag)
+        - Zielvariable definieren (z.B. Verspätung, Ausfall)
+    - Daten in Trainings- und Testset aufteilen
 ### 3.4 Modeling and Evaluation
 - Describe the model architecture(s) you selected
+- XGBoost Classifier
 - Describe how you train your models
 - Describe how you evaluate your models/ which metrics you use
 ## 4 Results
