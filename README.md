@@ -82,10 +82,9 @@ ML-4-B
 - Data understanding:
     - Bahndaten: Informationen zu Zugfahrten, Verspätungen, Ausfällen pro Station einer Zugfahrt der seit 2025
     - Wetterdaten: Stündliche Wetterdaten für Fernverkehrsbahnhöfe in Deutschland
-      - `Zeitstempel, Temperatur, Niederschlag, Windgeschwindigkeit, Luftfeuchtigkeit`
     - Ca. 3 Millionen Zeilen Bahndaten
     - 107 Fernverkehrsbahnhöfe in Deutschland
-    - Ca. 375.000 Zeilen Wetterdaten (ca. 3.500 Zeilen pro Bahnhof)
+    - 
     - Ziel: Zusammenhang zwischen Wetterbedingungen und Zugverspätungen/Ausfällen erkennen
 - Data preparation:
     - Wetterdaten in DataFrame umwandeln
