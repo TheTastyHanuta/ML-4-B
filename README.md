@@ -27,6 +27,7 @@ ML-4-B
 │   │   ├── calulcations
 │   │   │   ├── overview.py 
 │   │   │   └── direct_train.py
+│   │   ├── pages
 │   │   └── Home.py
 │   ├── weatherdata
 │   │   ├── data_scraping
