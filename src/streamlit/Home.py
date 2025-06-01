@@ -3,6 +3,7 @@ import streamlit as st
 import json
 from pathlib import Path
 
+# Set the page configuration
 st.set_page_config(
     page_title="DB-Statistik – Übersicht",
     layout="wide",
