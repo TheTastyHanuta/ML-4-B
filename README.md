@@ -79,6 +79,13 @@ ML-4-B
 ### 3.3 Data Understanding and Preparation
 - Bahn Data exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration/exploration.ipynb)
 - Wetter Data exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration/exploration.ipynb)
+- Data understanding:
+    - Bahndaten: Informationen zu Zugfahrten, Verspätungen, Ausfällen pro Station einer Zugfahrt der seit 2025
+    - Wetterdaten: Stündliche Wetterdaten für Fernverkehrsbahnhöfe in Deutschland
+    - Ca. 3 Millionen Zeilen Bahndaten
+    - 107 Fernverkehrsbahnhöfe in Deutschland
+    - 
+    - Ziel: Zusammenhang zwischen Wetterbedingungen und Zugverspätungen/Ausfällen erkennen
 - Data preparation:
     - Wetterdaten in DataFrame umwandeln
     - Bahndaten und Wetterdaten zusammenführen
