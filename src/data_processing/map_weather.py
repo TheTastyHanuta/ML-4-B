@@ -1,4 +1,7 @@
-def map_weather(bahn, weather):
+import pandas as pd
+from datetime import datetime
+
+def map_weather(bahn: pd.DataFrame, weather: pd.DataFrame) -> pd.DataFrame:
     """
     Map weather data to Bahn sub-trips.
     This function takes Bahn sub-trip data and weather data, and maps the weather conditions to each sub-trip based on the departure time and location.
