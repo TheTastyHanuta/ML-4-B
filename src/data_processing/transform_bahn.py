@@ -2,7 +2,7 @@ import pandas as pd
 import itertools
 from pathlib import Path
 
-def transform_data(path="../../data/bahn_data"):
+def transform_bahn(path: str ="../../data/bahn_data") -> pd.DataFrame:
     """
     Transform the Bahn data to extract sub-trips from the train rides.
     This function processes the Bahn data, extracts sub-trips, and returns a DataFrame with the following columns:
@@ -21,7 +21,7 @@ def transform_data(path="../../data/bahn_data"):
     """
     # Datensatz laden
     df = pd.concat(
-        [pd.read_parquet(f, engine="pyarrow") for f in sorted(Path(path).glob("*.parquet"))[-4:]],
+        [pd.read_parquet(f, engine="pyarrow") for f in sorted(Path(path).glob("*.parquet"))],
         ignore_index=True)
     # Nur ICE
     df = df[df['train_type'] == 'ICE']

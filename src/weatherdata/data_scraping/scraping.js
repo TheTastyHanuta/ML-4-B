@@ -23,9 +23,9 @@ if (!fs.existsSync("../stationsextraction/stations_extracted copy.json")) {
 }
 
 // Load the list of cities and their corresponding IDs
-const staedte = JSON.parse(fs.readFileSync("../stationsextraction/stations_extracted copy.json", "utf-8"));
+const staedte = JSON.parse(fs.readFileSync("../stationsextraction/stations_extracted copy 2.json", "utf-8"));
 
-// Load previousley saved weather data
+// Load previously saved weather data
 let datadump =  JSON.parse(fs.readFileSync("./scrapedData/scrapedData.json", "utf-8"));
 
 // Set constants for the API-request
