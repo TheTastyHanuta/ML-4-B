@@ -19,6 +19,7 @@ def transform_weather(path: str = "../weatherdata/data_scraping/scrapedData/scra
              - snow_amount: Snow amount in mm (if available)
     """
 
+    # Load the JSON data
     with open(path, 'r') as file:
         data = pd.read_json(file)
 

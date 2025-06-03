@@ -8,13 +8,13 @@ from src.data_processing.map_weather import map_weather
 def transform_and_save() -> None:
     # Call the transform_data function to process the data
     transformed_bahn = transform_bahn(path="../../data/bahn_data")
-    transformed_weather = transform_weather(path="../weatherdata/data_scraping/scrapedData/scrapedData.json")
-
     # Save the transformed bahn data to a parquet file
     bahn_output_path = Path("../../data/bahn_data/processed/subtrips_data.parquet")
     print("Speichere Sub-Trips DataFrame als Parquet...")
     transformed_bahn.to_parquet(bahn_output_path, index=False, engine="pyarrow")
 
+    # Call the transform_weather function to process the weather data
+    transformed_weather = transform_weather(path="../weatherdata/data_scraping/scrapedData/scrapedData.json")
     # Save the transformed weather data to a parquet file
     weather_output_path = Path("../../data/weather_data/weather_data.parquet")
     print("Speichere Wetterdaten DataFrame als Parquet...")
@@ -36,7 +36,6 @@ def map_weather_and_save() -> None:
     print("Speichere Sub-Trips DataFrame mit Wetterdaten als Parquet...")
     merged_data.to_parquet(output_path, index=False, engine="pyarrow")
 
-if __name__ == "__main__":
-    transform_and_save()
-    #map_weather_and_save()
-    print("Datenverarbeitung abgeschlossen. Die Daten wurden gespeichert.")
+transform_and_save()
+#map_weather_and_save()
+print("Datenverarbeitung abgeschlossen. Die Daten wurden gespeichert.")

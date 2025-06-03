@@ -21,7 +21,7 @@ def transform_bahn(path: str ="../../data/bahn_data") -> pd.DataFrame:
     """
     # Datensatz laden
     df = pd.concat(
-        [pd.read_parquet(f, engine="pyarrow") for f in sorted(Path(path).glob("*.parquet"))[-4:]],
+        [pd.read_parquet(f, engine="pyarrow") for f in sorted(Path(path).glob("*.parquet"))],
         ignore_index=True)
     # Nur ICE
     df = df[df['train_type'] == 'ICE']
