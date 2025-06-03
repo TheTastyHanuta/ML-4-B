@@ -1,3 +1,4 @@
+import json
 import pandas as pd
 from datetime import datetime
 
@@ -19,26 +20,31 @@ def transform_weather(path: str = "../weatherdata/data_scraping/scrapedData/scra
              - snow_amount: Snow amount in mm (if available)
     """
 
-    # Load the JSON data
+    # Load the JSON data as a nested dict
     with open(path, 'r') as file:
-        data = pd.read_json(file)
+        data = json.load(file)
 
-    # Transform the data to a more usable format
+    # Transform the data to a flat list of records
     records = []
     for station, entries in data.items():
         for entry in entries:
+            # Convert UNIX timestamp to datetime
             dt = datetime.fromtimestamp(entry['dt'])
+            # Convert temperature from Kelvin to Celsius
             temp_k = entry['main']['temp']
-            temp_c = temp_k - 273.15  # Convert from Kelvin to Celsius
+            temp_c = round(temp_k - 273.15, 2)
+
+            # Extract description, rain, snow, humidity, wind speed
             weather_desc = entry['weather'][0]['description'] if entry.get('weather') else None
             rain_amount = entry.get('rain', {}).get('1h', 0.0)
             snow_amount = entry.get('snow', {}).get('1h', 0.0)
             humidity = entry['main']['humidity']
             wind_speed = entry['wind']['speed']
+
             records.append({
                 'station': station,
                 'time': dt,
-                'temp_celsius': round(temp_c, 2),
+                'temp_celsius': temp_c,
                 'humidity': humidity,
                 'wind_speed': wind_speed,
                 'weather': weather_desc,
@@ -46,6 +52,6 @@ def transform_weather(path: str = "../weatherdata/data_scraping/scrapedData/scra
                 'snow_amount': snow_amount
             })
 
-    # Create DataFrame
+    # Create and return the DataFrame
     df = pd.DataFrame(records)
     return df
