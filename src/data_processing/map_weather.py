@@ -24,6 +24,20 @@ def map_weather(bahn: pd.DataFrame, weather: pd.DataFrame) -> pd.DataFrame:
     :return: DataFrame containing Bahn sub-trip data with mapped weather conditions.
     """
 
-    # ToDo: Implement the mapping logic
+    # Convert time columns to datetime
+    bahn['departure_time_origin'] = pd.to_datetime(bahn['departure_time_origin'])
+    weather['time'] = pd.to_datetime(weather['time'])
 
-    return None
+    # Round the time to the nearest hour for both DataFrames
+    bahn['time_hour'] = bahn['departure_time_origin'].dt.floor('H')
+    weather['time_hour'] = weather['time']
+
+    # Rename columns for clarity
+    bahn = bahn.rename(columns={'origin_station': 'station'})
+
+    # Inner join the Bahn and weather DataFrames on station and time_hour
+    merged = pd.merge(bahn, weather, on=['station', 'time_hour'], how='inner')
+
+    # Maybe i can make it work so that the weather data is also available for the destination station
+
+    return merged
