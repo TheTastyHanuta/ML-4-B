@@ -35,12 +35,19 @@ def map_weather_and_save() -> None:
     print("Wende Wetterdaten auf Sub-Trips DataFrame an...")
     merged_data = map_weather(transformed_data, weather_data)
 
+    # Print the shape of the merged data
+    print(f"Shape des zusammengeführten DataFrames: {merged_data.shape}")
+    # Print the first few rows of the merged data
+    print("Erste Zeilen des zusammengeführten DataFrames:")
+    print(merged_data.head())
+
     # Save the merged data to a new parquet file
-    output_path = Path("../../data/bahn_data/processed/subtrips_with_weather.parquet")
+    output_path = Path("../data/subtrips_with_weather.parquet")
     print("Speichere Sub-Trips DataFrame mit Wetterdaten als Parquet...")
     merged_data.to_parquet(output_path, index=False, engine="pyarrow")
 
-print("Starte Verarbeitung")
-transform_and_save(False, True)
-#map_weather_and_save()
-print("Datenverarbeitung abgeschlossen. Die Daten wurden gespeichert.")
+if __name__ == "__main__":
+    print("Starte Verarbeitung")
+    # transform_and_save(False, True)
+    map_weather_and_save()
+    print("Datenverarbeitung abgeschlossen. Die Daten wurden gespeichert.")
