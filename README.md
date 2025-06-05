@@ -48,6 +48,10 @@ ML-4-B
 ## 3 Methodology
 ### 3.1 General Methodology
 - Suche auf GitHub und GitLab nach bereits existierenden Projekten
+- Theo Döllmann's Projekt angeschaut und nach Optimierungsmöglichkeiten gesucht --> Wetterdaten können auch Einfluss auf Verspätungen haben
+- Wetterdaten & Bahndaten sammeln: 
+    - [Data Collection](https://github.com/TheTastyHanuta/ML-4-B#32-data-collection):
+- 
 ### 3.2. Data Collection
 - Keine historischen Daten für Zugfahren über Deutsche Bahn API abrufbar
 - Daten aus GitHub von [piebro](https://github.com/piebro/deutsche-bahn-data)
@@ -68,13 +72,15 @@ ML-4-B
 - Pro Bahnhof werden die Daten separat gespeichert  
 - Der Code merkt sich automatisch den letzten Stand und setzt dort bei erneutem Lauf fort  
 
-#### Fehlerbehandlung
+#### (( Fehlerbehandlung
 
 - Ursprünglich: Abbruch bei <168 Datensätzen → Annahme: keine Daten mehr verfügbar  
 - Beobachtung: API liefert manchmal zu früh zu wenige Daten  
 - Vermutung: verteilte Speicherung → einzelne Datenbanken liefern vorzeitig weniger zurück  
 - Lösung: Der Code wartet nun gezielt auf eine **klare Fehlermeldung** der API, bevor er abbricht  
 - Ziel: Sicherstellen, dass **alle** verfügbaren Daten abgeholt werden
+
+))
 
 ### 3.3 Data Understanding and Preparation
 - Bahn Data exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration/exploration.ipynb)
