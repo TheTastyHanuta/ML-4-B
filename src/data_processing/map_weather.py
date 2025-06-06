@@ -32,11 +32,21 @@ def map_weather(bahn: pd.DataFrame, weather: pd.DataFrame) -> pd.DataFrame:
     bahn['time_hour'] = bahn['departure_time_origin'].dt.floor('H')
     weather['time_hour'] = weather['time']
 
+    print("Subtrips:", bahn['departure_time_origin'].min(), "bis", bahn['departure_time_origin'].max())
+    print("Weather:  ", weather['time'].min(), "bis", weather['time'].max())
+
     # Rename columns for clarity
     bahn = bahn.rename(columns={'origin_station': 'station'})
 
     # Inner join the Bahn and weather DataFrames on station and time_hour
-    merged = pd.merge(bahn, weather, on=['station', 'time_hour'], how='inner')
+    merged = pd.merge(bahn, weather, on=['station', 'time_hour'], how='left')
+
+    print(f"Anzahl weather original: {len(weather)}")
+    print(f"Anzahl subtrips original: {len(bahn)}")
+    print(f"Anzahl Zeilen nach Merge:  {len(merged)}")
+
+    missing_weather = merged['temp_celsius'].isna().sum()
+    print(f"Subtrips ohne passenden Wetter-Eintrag: {missing_weather}")
 
     # Maybe i can make it work so that the weather data is also available for the destination station
 

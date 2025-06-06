@@ -21,7 +21,7 @@ def transform_weather(path: str = "../weatherdata/data_scraping/scrapedData/scra
     """
 
     # Load the JSON data as a nested dict
-    with open(path, 'r') as file:
+    with open(path, "r", encoding="utf-8") as file: # For real i hate windows. Why is it not using utf-8 by default?
         data = json.load(file)
 
     # Transform the data to a flat list of records
