@@ -23,8 +23,8 @@ def main():
     #parquet_file = Path('../../data/bahn_data/processed/subtrips_data.parquet')
     #csv_file = Path('../../data/bahn_data/processed/subtrips_data.csv')
 
-    parquet_file = Path('../../data/weather_data/weather_data.parquet')
-    csv_file = Path('../../data/weather_data/weather_data.csv')
+    parquet_file = Path('../../data/subtrips_with_weather.parquet')
+    csv_file = Path('../../data/subtrips_with_weather.csv')
 
     # Convert the Parquet file to a CSV file
     convert_parquet_to_csv(parquet_file, csv_file)
