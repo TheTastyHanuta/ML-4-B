@@ -8,6 +8,17 @@ from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 import pickle
 
+import torch
+use_cuda = torch.cuda.is_available()
+
+print('Using CUDA:', use_cuda)
+
+if use_cuda:
+    print('__CUDNN VERSION:', torch.backends.cudnn.version())
+    print('__Number CUDA Devices:', torch.cuda.device_count())
+    print('__CUDA Device Name:',torch.cuda.get_device_name(0))
+    print('__CUDA Device Total Memory [GB]:',torch.cuda.get_device_properties(0).total_memory/1e9)
+
 # Load data and preprocess
 X_train, X_test, y_train, y_test = train_test_data(
     path='../../data/subtrips_with_weather.parquet',
@@ -30,7 +41,7 @@ pipeline = Pipeline([
     ('xgb', XGBRegressor(
         objective='reg:squarederror',
         tree_method='hist',
-        device='cuda:0',
+        device='cuda',
         n_estimators=100,
         learning_rate=0.1,
         max_depth=8,
@@ -40,8 +51,9 @@ pipeline = Pipeline([
 ])
 
 # Train the model
+print("Training XGBoost model...")
 pipeline.fit(X_train, y_train)
-
+print("Model training complete.")
 # Evaluate model
 y_pred = pipeline.predict(X_test)
 print(f"RMSE: {np.sqrt(mean_squared_error(y_test, y_pred)):.3f}")
@@ -53,8 +65,8 @@ metrics = {
     'R2': [r2_score(y_test, y_pred)]
 }
 metrics_df = pd.DataFrame(metrics)
-metrics_df.to_csv('../../models/xgboost_metrics.csv', index=False)
+#metrics_df.to_csv('../../models/xgboost_metrics.csv', index=False)
 
 # Save the model
-with open('../../models/xgboost_model.pkl', 'wb') as f:
-    pickle.dump(pipeline, f)
+#with open('../../models/xgboost_model.pkl', 'wb') as f:
+#    pickle.dump(pipeline, f)
