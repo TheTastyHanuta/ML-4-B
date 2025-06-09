@@ -13,6 +13,11 @@ build_info = xgboost.build_info()
 for name in sorted(build_info.keys()):
     print(f'{name}: {build_info[name]}')
 
+CAT_FEATURES.remove('weather') # Remove weather feature
+# Remove 'temperature', 'humidity', 'wind_speed', 'precipitation', 'snow_amount' from NUM_FEATURES
+NUM_FEATURES = ['hour', 'dayofweek', 'month']
+
+
 # Load data and preprocess
 X_train, X_test, y_train, y_test = train_test_data(
     path='../../data/subtrips_with_weather.parquet',
@@ -60,8 +65,8 @@ metrics = {
     'R2': [r2_score(y_test, y_pred)]
 }
 metrics_df = pd.DataFrame(metrics)
-metrics_df.to_csv('../../models/xgboost_metrics.csv', index=False)
+metrics_df.to_csv('../../models/xgboost_metrics_without.csv', index=False)
 
 # Save the model
-with open('../../models/xgboost_model.pkl', 'wb') as f:
+with open('../../models/xgboost_model_without.pkl', 'wb') as f:
     pickle.dump(pipeline, f)
