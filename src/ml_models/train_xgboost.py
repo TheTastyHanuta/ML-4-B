@@ -29,9 +29,8 @@ pipeline = Pipeline([
     ('preprocessing', preprocessor),
     ('xgb', XGBRegressor(
         objective='reg:squarederror',
-        tree_method='gpu_hist',
-        predictor='gpu_predictor',
-        gpu_id=1,
+        tree_method='hist',
+        device='cuda',
         n_estimators=100,
         learning_rate=0.1,
         max_depth=6,
