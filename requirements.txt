@@ -6,3 +6,4 @@ matplotlib~=3.10.3
 joblib~=1.5.1
 scikit-learn~=1.7.0
 lightgbm~=4.6.0
+xgboost~=3.0.2
