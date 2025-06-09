@@ -9,11 +9,20 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 df = pd.read_parquet("../../data/subtrips_with_weather.parquet")
 
 # Feature Engineering
-features = ['station', 'destination_station', 'day_of_week', 'hour_of_day', 'train_name', 'rain_amount']
+features = ['station', 'destination_station', 'day_of_week', 'hour_of_day', 'train_name', 'rain_amount', 'snow_amount', 'wind_speed', 'temp_celsius', 'weather']
 target = 'delay_at_dest'
 
+# Remove rows with NaN values in the target column
+df = df.dropna(subset=[target])
+
+# Remove rows with NaN values in the feature columns
+df = df.dropna(subset=features)
+
+# Outliers removal
+df = df[(df[target] >= -10) & (df[target] <= 120)]
+
 # Encode categorical features
-for col in ['station', 'destination_station', 'train_name']:
+for col in ['station', 'destination_station', 'train_name', 'weather']:
     df[col] = df[col].astype('category')
 
 X = df[features]
@@ -35,26 +44,24 @@ valid_data = lgb.Dataset(
     reference=train_data
 )
 
-# LightGBM Parameter
+# LightGBM Parameters
 params = {
     'objective': 'regression',
     'metric': 'rmse',
+    'learning_rate': 0.05,
     'verbosity': -1
 }
 
-# Callbacks für Early Stopping und Logging
-callbacks = [
-    lgb.early_stopping(stopping_rounds=50),
-    lgb.log_evaluation(period=100)
-]
-
-# Train the model
+max_rounds = 7000
 model = lgb.train(
     params,
     train_data,
-    num_boost_round=1000,
+    num_boost_round=max_rounds,
     valid_sets=[valid_data],
-    callbacks=callbacks
+    callbacks=[
+        lgb.early_stopping(stopping_rounds=50),
+        lgb.log_evaluation(period=100)
+    ]
 )
 
 y_pred = model.predict(X_test, num_iteration=model.best_iteration)
