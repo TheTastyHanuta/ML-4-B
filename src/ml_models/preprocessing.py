@@ -18,7 +18,7 @@ def load_and_rename(path: str) -> pd.DataFrame:
     df = pd.read_parquet(path)
 
     # Only take a subset of rows
-    df = df.iloc[:800000]
+    #df = df.iloc[:100000]
 
     df = df.rename(columns={
         'station': 'start_station',
