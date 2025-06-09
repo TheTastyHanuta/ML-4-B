@@ -18,7 +18,7 @@ def load_and_rename(path: str) -> pd.DataFrame:
     df = pd.read_parquet(path)
 
     # Only take a subset of rows
-    #df = df.iloc[:10000]
+    #df = df.iloc[:300000]
 
     df = df.rename(columns={
         'station': 'start_station',
@@ -89,6 +89,12 @@ def train_test_data(path: str,
 
     # Remove rows with NaN values in the target column
     df = df.dropna(subset=[target])
+
+    # Remove outliers in the target column
+    df = df[(df[target] >= -10) & (df[target] <= 120)]
+
+    # Remove rows with NaN values in the feature columns
+    df = df.dropna(subset=cat_features + num_features)
 
     X, y = get_feature_target_split(df, cat_features, num_features, target)
 
