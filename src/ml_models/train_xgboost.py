@@ -29,11 +29,13 @@ pipeline = Pipeline([
     ('preprocessing', preprocessor),
     ('xgb', XGBRegressor(
         objective='reg:squarederror',
-        tree_method='hist',
-        device='cuda',
+        tree_method='gpu_hist',
+        device='cuda:0',
+        predictor='gpu_predictor',
         n_estimators=100,
         learning_rate=0.1,
         max_depth=6,
+        verbosity=1,
         random_state=42
     ))
 ])
