@@ -1,77 +1,115 @@
-from preprocessing import train_test_data, CAT_FEATURES, NUM_FEATURES
+from src.ml_models.preprocessing import train_test_data, CAT_FEATURES, NUM_FEATURES
 import lightgbm as lgb
+from pathlib import Path
 import pickle
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-# 1. Load, preprocess, and split data using shared features module
-X_train, X_test, y_train, y_test = train_test_data(
-    path='../../data/subtrips_with_weather.parquet',
-    cat_features=CAT_FEATURES,
-    num_features=NUM_FEATURES,
-    test_size=0.2,
-    random_state=42
-)
+def train_lightgbm(subset: int | str = 'all'):
+    """
+    Train a LightGBM model on the Bahn sub-trip data with weather conditions.
+    This function loads the preprocessed data, trains the model, evaluates it,
+    and saves the metrics and model to files.
+    :param subset: The subset of data to use for training. Can be an integer for a specific number of rows,
+                   'all' for the entire dataset or leave empty for the entire dataset.
+    :return: None
+    """
 
-# 2. Ensure LightGBM-compatible dtypes: convert categorical cols to pandas 'category'
-for col in CAT_FEATURES:
-    X_train[col] = X_train[col].astype('category')
-    X_test[col] = X_test[col].astype('category')
+    base_dir = Path(__file__).resolve().parent
+    data_path = base_dir / '../../data/subtrips_with_weather.parquet'
+    metrics_path = base_dir / '../../models/lightgbm_metrics.csv'
+    model_path = base_dir / '../../models/lightgbm_model.pkl'
 
-# 3. Prepare LightGBM datasets without dropping any rows
-train_data = lgb.Dataset(
-    X_train,
-    label=y_train,
-    categorical_feature=CAT_FEATURES,
-    free_raw_data=False
-)
-valid_data = lgb.Dataset(
-    X_test,
-    label=y_test,
-    categorical_feature=CAT_FEATURES,
-    reference=train_data,
-    free_raw_data=False
-)
+    # Load data and preprocess
+    X_train, X_test, y_train, y_test = train_test_data(
+        path=data_path,
+        cat_features=CAT_FEATURES,
+        num_features=NUM_FEATURES,
+        test_size=0.2,
+        random_state=42,
+        subset=subset
+    )
 
-# 4. Set LightGBM parameters
-params = {
-    'objective': 'regression',
-    'metric': 'rmse',
-    'learning_rate': 0.05,
-    'verbosity': -1
-}
-max_rounds = 10000
+    # Ensure LightGBM-compatible dtypes: convert categorical cols to pandas 'category'
+    for col in CAT_FEATURES:
+        X_train[col] = X_train[col].astype('category')
+        X_test[col] = X_test[col].astype('category')
 
-# 5. Train model with early stopping via callbacks
-model = lgb.train(
-    params,
-    train_data,
-    num_boost_round=max_rounds,
-    valid_sets=[valid_data],
-    callbacks=[
-        lgb.early_stopping(stopping_rounds=50),
-        lgb.log_evaluation(period=100)
-    ]
-)
+    # Prepare LightGBM datasets without dropping any rows
+    train_data = lgb.Dataset(
+        X_train,
+        label=y_train,
+        categorical_feature=CAT_FEATURES,
+        free_raw_data=False
+    )
+    valid_data = lgb.Dataset(
+        X_test,
+        label=y_test,
+        categorical_feature=CAT_FEATURES,
+        reference=train_data,
+        free_raw_data=False
+    )
 
-# 6. Predict on test set
-y_pred = model.predict(X_test, num_iteration=model.best_iteration)
+    # Set LightGBM parameters
+    #params = {
+    #    'objective': 'regression',
+    #    'metric': 'rmse',
+    #    'learning_rate': 0.05,
+    #    'verbosity': -1
+    #}
 
-# 7. Compute metrics
-mse = mean_squared_error(y_test, y_pred)
-rmse = np.sqrt(mse)
-mae = mean_absolute_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
-metrics = {'rmse': rmse, 'mae': mae, 'r2': r2}
+    params = {
+        'objective': 'regression',
+        'metric': 'rmse',
+        'boosting_type': 'gbdt',
+        'num_leaves': 31,
+        'learning_rate': 0.05,
+        'feature_fraction': 0.9,
+        'bagging_fraction': 0.8,
+        'bagging_freq': 5,
+        'verbose': -1,
+        #'device': 'cuda' # ToDo: I need to recompile LightGBM with GPU support
+    }
+    max_rounds = 5000
 
-# 8. Save model and metrics
-with open('../../models/lightgbm_model.pkl', 'wb') as f:
-    pickle.dump(model, f)
-metrics_df = pd.DataFrame([metrics])
-metrics_df.to_csv('../../models/lightgbm_metrics.csv', index=False)
+    # Train model with early stopping via callbacks
+    print("Training LightGBM model...")
+    model = lgb.train(
+        params,
+        train_data,
+        num_boost_round=max_rounds,
+        valid_sets=[valid_data],
+        callbacks=[
+            lgb.early_stopping(stopping_rounds=50),
+            lgb.log_evaluation(period=100)
+        ]
+    )
+    print("Model training complete.")
 
-# 9. Print results
-print(f"RMSE: {rmse:.3f}")
-print(f"MAE: {mae:.3f}")
-print(f"R2: {r2:.3f}")
+    # Predict on test set
+    y_pred = model.predict(X_test, num_iteration=model.best_iteration)
+
+    # Compute metrics
+    mse = mean_squared_error(y_test, y_pred)
+    rmse = np.sqrt(mse)
+    mae = mean_absolute_error(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
+    metrics = {'rmse': rmse, 'mae': mae, 'r2': r2}
+
+    # Print results
+    print(f"RMSE: {rmse:.3f}")
+    print(f"MAE: {mae:.3f}")
+    print(f"R2: {r2:.3f}")
+
+    # Save model and metrics
+    with open(model_path, 'wb') as f:
+        pickle.dump(model, f)
+    metrics_df = pd.DataFrame([metrics])
+    metrics_df.to_csv(metrics_path, index=False)
+    print("Model and metrics saved successfully.")
+
+if __name__ == "__main__":
+    print("Starting LightGBM model training...")
+    train_lightgbm()
+    print("Training complete.")

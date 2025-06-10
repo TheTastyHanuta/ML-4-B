@@ -54,4 +54,7 @@ def transform_weather(path: str = "../weatherdata/data_scraping/scrapedData/scra
 
     # Create and return the DataFrame
     df = pd.DataFrame(records)
+
+    print(f"Shape des Weather DataFrames: {df.shape}")
+
     return df

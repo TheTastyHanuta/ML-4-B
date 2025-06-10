@@ -23,11 +23,11 @@ def transform_bahn(path: str ="../../data/bahn_data") -> pd.DataFrame:
     df = pd.concat(
         [pd.read_parquet(f, engine="pyarrow") for f in sorted(Path(path).glob("*.parquet"))],
         ignore_index=True)
-    # Nur ICE
-    df = df[df['train_type'] == 'ICE']
+    # Nur ICE und IC
+    df = df[df['train_type'].isin(['ICE', 'IC'])]
 
     # Shape
-    print(f"Shape des DataFrames: {df.shape}")
+    print(f"Shape des Bahn Dataframes nur mit ICE und IC: {df.shape}")
 
     df['departure_planned_time'] = pd.to_datetime(df['departure_planned_time'], errors='coerce')
     df['arrival_planned_time'] = pd.to_datetime(df['arrival_planned_time'], errors='coerce')
@@ -81,5 +81,7 @@ def transform_bahn(path: str ="../../data/bahn_data") -> pd.DataFrame:
 
     # Neues DataFrame mit allen Sub-Trip-Datensätzen
     df_subtrips = pd.DataFrame(records)
+
+    print(f"Shape des neuen Sub-Trips DataFrames: {df_subtrips.shape}")
 
     return df_subtrips
