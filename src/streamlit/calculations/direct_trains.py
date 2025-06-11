@@ -3,7 +3,6 @@ from pathlib import Path
 import pandas as pd
 from tqdm import tqdm
 
-
 def populate_direct_train_dict(df, direct_train_dict):
     df["arrival_time_delta_in_min"] = (df["arrival_change_time"] - df["arrival_planned_time"]).dt.total_seconds() / 60
     df["departure_time_delta_in_min"] = (df["departure_change_time"] - df["departure_planned_time"]).dt.total_seconds() / 60
@@ -98,9 +97,9 @@ def calculate_stats_and_save(direct_train_dict, save_dir):
 if __name__ == "__main__":
     print("Starting direct train calculations...")
 
-    base_dir = Path(__file__).resolve().parent.parent.parent
+    base_dir = Path(__file__).resolve().parent.parent.parent.parent
     data_dir = base_dir / "data" / "bahn_data"
-    save_dir = base_dir / "data" / "streamlit" / "direct_trains"
+    save_dir = base_dir / "data" / "streamlit_data"
 
     columns = [
         "station",
@@ -118,7 +117,7 @@ if __name__ == "__main__":
 
     direct_train_dict = {}
     print("Processing Month 1/3")
-    populate_direct_train_dict(pd.read_parquet(last_full_months[0], columns=columns), direct_train_dict)
+    populate_direct_train_dict(pd.read_parquet(last_full_months[0]), direct_train_dict)
     #print("Processing Month 2/3")
     #populate_direct_train_dict(pd.read_parquet(last_full_months[1], columns=columns), direct_train_dict)
     #print("Processing Month 3/3")
