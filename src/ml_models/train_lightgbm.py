@@ -3,6 +3,7 @@ import lightgbm as lgb
 from pathlib import Path
 import pickle
 import numpy as np
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 import pandas as pd
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
@@ -19,7 +20,7 @@ def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
 
     base_dir = Path(__file__).resolve().parent
     data_path = base_dir / '../../data/subtrips_with_weather.parquet'
-    metrics_path = base_dir / f'../../models/lightgbm_metrics_{target}.csv'
+    metrics_path = base_dir / f'../../models/metrics/lightgbm_metrics_{target}.csv'
     model_path = base_dir / f'../../models/lightgbm_model_{target}.pkl'
     feature_importance_path = base_dir / f'../../models/lightgbm_feature_importance_{target}.csv'
 
@@ -54,28 +55,24 @@ def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
         free_raw_data=False
     )
 
-    # Set LightGBM parameters
-    params = {
-        'objective': 'regression',
-        'metric': 'rmse',
-        'learning_rate': 0.1,
-        'verbosity': -1
-    }
-    '''
-    params = {
-        'objective': 'regression',
-        'metric': 'rmse',
-        'boosting_type': 'gbdt',
-        'num_leaves': 31,
-        'learning_rate': 0.05,
-        'feature_fraction': 0.9,
-        'bagging_fraction': 0.8,
-        'bagging_freq': 5,
-        'verbose': -1,
-        #'device': 'cuda' # ToDo: I need to recompile LightGBM with GPU support
-    }
-    '''
-    max_rounds = 15000
+    if target == 'delay_minutes':
+        # For regression ('delay_minutes'), use regression objective
+        params = {
+            'objective': 'regression',
+            'metric': 'rmse',
+            'learning_rate': 0.1,
+            'verbosity': -1
+        }
+    else:
+        # For binary classification ('canceled'), use binary objective
+        params = {
+            'objective': 'binary',
+            'metric': 'binary_logloss',
+            'learning_rate': 0.1,
+            'verbosity': -1,
+        }
+
+    max_rounds = 5000
 
     # Train model with early stopping via callbacks
     print("Training LightGBM model...")
@@ -94,17 +91,31 @@ def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
     # Predict on test set
     y_pred = model.predict(X_test, num_iteration=model.best_iteration)
 
-    # Compute metrics
-    mse = mean_squared_error(y_test, y_pred)
-    rmse = np.sqrt(mse)
-    mae = mean_absolute_error(y_test, y_pred)
-    r2 = r2_score(y_test, y_pred)
-    metrics = {'rmse': rmse, 'mae': mae, 'r2': r2}
-
-    # Print results
-    print(f"RMSE: {rmse:.3f}")
-    print(f"MAE: {mae:.3f}")
-    print(f"R2: {r2:.3f}")
+    if target == 'delay_minutes':
+        mse = mean_squared_error(y_test, y_pred)
+        rmse = np.sqrt(mse)
+        mae = mean_absolute_error(y_test, y_pred)
+        r2 = r2_score(y_test, y_pred)
+        metrics = {'rmse': rmse, 'mae': mae, 'r2': r2}
+        # Print results
+        print(f"RMSE: {rmse:.3f}")
+        print(f"MAE: {mae:.3f}")
+        print(f"R2: {r2:.3f}")
+    else:
+        # For binary classification, threshold predictions at 0.5
+        y_pred_binary = (y_pred > 0.5).astype(int)
+        accuracy = accuracy_score(y_test, y_pred_binary)
+        precision = precision_score(y_test, y_pred_binary)
+        recall = recall_score(y_test, y_pred_binary)
+        f1 = f1_score(y_test, y_pred_binary)
+        auc = roc_auc_score(y_test, y_pred)
+        metrics = {'accuracy': accuracy, 'precision': precision, 'recall': recall, 'f1': f1, 'auc': auc}
+        # Print results
+        print(f"Accuracy: {accuracy:.3f}")
+        print(f"Precision: {precision:.3f}")
+        print(f"Recall: {recall:.3f}")
+        print(f"F1 Score: {f1:.3f}")
+        print(f"AUC: {auc:.3f}")
 
     # Save model and metrics
     with open(model_path, 'wb') as f:
@@ -113,6 +124,7 @@ def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
     metrics_df.to_csv(metrics_path, index=False)
     print("Model and metrics saved successfully.")
 
+    # Save feature importance
     importances = model.feature_importance(importance_type='gain')
     feature_names = X_train.columns
     feature_importance_df = pd.DataFrame({
@@ -120,10 +132,9 @@ def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
         'importance': importances
     }).sort_values(by='importance', ascending=False)
     feature_importance_df.to_csv(feature_importance_path, index=False)
-
     print(feature_importance_df)
 
 if __name__ == "__main__":
     print("Starting LightGBM model training...")
-    train_lightgbm()
+    train_lightgbm(target="canceled")
     print("Training complete.")
