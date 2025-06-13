@@ -100,11 +100,6 @@ def train_test_data(path: str | Path,
     df = load_and_rename(path, subset)
     df = extract_datetime_features(df)
 
-    # If canceled is target variable, remove it from the feature list
-    if target == 'canceled':
-        cat_features = [f for f in cat_features if f != 'canceled']
-        num_features = [f for f in num_features if f != 'canceled']
-
     # If delay_minutes is the target, remove it from the feature list
     if target == 'delay_minutes':
         cat_features = [f for f in cat_features if f != 'delay_minutes']
@@ -114,10 +109,19 @@ def train_test_data(path: str | Path,
     df = df.dropna(subset=[target])
 
     # Remove outliers in the target column
-    df = df[(df[target] >= -10) & (df[target] <= 120)]
+    df = df[(df[target] >= -10) & (df[target] <= 180)]
 
     # Remove rows with NaN values in the feature columns
     df = df.dropna(subset=cat_features + num_features)
+
+    # If 'delay_minutes' is the target, remove rows with 'canceled' == 1
+    if target == 'delay_minutes':
+        df = df[df['canceled'] == 0]
+
+    print(f"Data shape after preprocessing: {df.shape}")
+    print(df.head(10))
+
+    print(f"Features: {cat_features + num_features}")
 
     X, y = get_feature_target_split(df, cat_features, num_features, target)
 
@@ -125,4 +129,4 @@ def train_test_data(path: str | Path,
 
 # Feature lists
 CAT_FEATURES = ['start_station', 'end_station', 'train_name', 'weather']
-NUM_FEATURES = ['hour', 'dayofweek', 'month', 'temperature', 'humidity', 'wind_speed', 'precipitation', 'snow_amount', 'canceled', 'delay_minutes']
+NUM_FEATURES = ['hour', 'dayofweek', 'month', 'temperature', 'humidity', 'wind_speed', 'precipitation', 'snow_amount', 'delay_minutes']

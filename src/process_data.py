@@ -65,6 +65,6 @@ def map_weather_and_save() -> None:
 
 if __name__ == "__main__":
     print("Starting data processing...")
-    #transform_and_save(True, False)
+    transform_and_save(True, False)
     map_weather_and_save()
     print("Data processing completed. Data has been saved.")

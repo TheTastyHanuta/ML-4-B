@@ -52,13 +52,13 @@ def train_lightgbm(subset: int | str = 'all'):
     )
 
     # Set LightGBM parameters
-    #params = {
-    #    'objective': 'regression',
-    #    'metric': 'rmse',
-    #    'learning_rate': 0.05,
-    #    'verbosity': -1
-    #}
-
+    params = {
+        'objective': 'regression',
+        'metric': 'rmse',
+        'learning_rate': 0.05,
+        'verbosity': -1
+    }
+    '''
     params = {
         'objective': 'regression',
         'metric': 'rmse',
@@ -71,7 +71,8 @@ def train_lightgbm(subset: int | str = 'all'):
         'verbose': -1,
         #'device': 'cuda' # ToDo: I need to recompile LightGBM with GPU support
     }
-    max_rounds = 5000
+    '''
+    max_rounds = 15000
 
     # Train model with early stopping via callbacks
     print("Training LightGBM model...")
