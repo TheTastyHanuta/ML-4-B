@@ -28,8 +28,8 @@ def train_xgboost(subset: int | str = 'all', target: str = 'delay_minutes'):
 
     base_dir = Path(__file__).resolve().parent
     data_path = base_dir / '../../data/subtrips_with_weather.parquet'
-    metrics_path = base_dir / '../../models/xgboost_metrics.csv'
-    model_path = base_dir / '../../models/xgboost_model.pkl'
+    metrics_path = base_dir / f'../../models/xgboost_metrics_{target}.csv'
+    model_path = base_dir / f'../../models/xgboost_model_{target}.pkl'
 
     # Load data and preprocess
     X_train, X_test, y_train, y_test = train_test_data(

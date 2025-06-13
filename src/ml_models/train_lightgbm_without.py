@@ -6,20 +6,21 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-def train_lightgbm(subset: int | str = 'all'):
+def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
     """
     Train a LightGBM model on the Bahn sub-trip data with weather conditions.
     This function loads the preprocessed data, trains the model, evaluates it,
     and saves the metrics and model to files.
     :param subset: The subset of data to use for training. Can be an integer for a specific number of rows,
                    'all' for the entire dataset or leave empty for the entire dataset.
+    :param target: The target variable for the model. Default is 'delay_minutes'. You can also change it to 'canceled'
     :return: None
     """
 
     base_dir = Path(__file__).resolve().parent
     data_path = base_dir / '../../data/subtrips_with_weather.parquet'
-    metrics_path = base_dir / '../../models/lightgbm_metrics_without.csv'
-    model_path = base_dir / '../../models/lightgbm_model_without.pkl'
+    metrics_path = base_dir / f'../../models/lightgbm_metrics_without_{target}.csv'
+    model_path = base_dir / f'../../models/lightgbm_model_without_{target}.pkl'
 
     # Remove 'temperature', 'humidity', 'wind_speed', 'precipitation', 'snow_amount' from NUM_FEATURES
     NUM_FEATURES = ['hour', 'dayofweek', 'month']

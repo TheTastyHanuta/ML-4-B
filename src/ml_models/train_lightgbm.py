@@ -19,8 +19,9 @@ def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
 
     base_dir = Path(__file__).resolve().parent
     data_path = base_dir / '../../data/subtrips_with_weather.parquet'
-    metrics_path = base_dir / '../../models/lightgbm_metrics.csv'
-    model_path = base_dir / '../../models/lightgbm_model.pkl'
+    metrics_path = base_dir / f'../../models/lightgbm_metrics_{target}.csv'
+    model_path = base_dir / f'../../models/lightgbm_model_{target}.pkl'
+    feature_importance_path = base_dir / f'../../models/lightgbm_feature_importance_{target}.csv'
 
     # Load data and preprocess
     X_train, X_test, y_train, y_test = train_test_data(
@@ -118,7 +119,7 @@ def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
         'feature': feature_names,
         'importance': importances
     }).sort_values(by='importance', ascending=False)
-    feature_importance_df.to_csv(base_dir / '../../models/lightgbm_feature_importance.csv', index=False)
+    feature_importance_df.to_csv(feature_importance_path, index=False)
 
     print(feature_importance_df)
 

@@ -28,8 +28,8 @@ def train_xgboost_without_weather(subset: int | str = 'all', target: str = 'dela
 
     base_dir = Path(__file__).resolve().parent
     data_path = base_dir / '../../data/subtrips_with_weather.parquet'
-    metrics_path = base_dir / '../../models/xgboost_metrics_without.csv'
-    model_path = base_dir / '../../models/xgboost_model_without.pkl'
+    metrics_path = base_dir / f'../../models/xgboost_metrics_without_{target}.csv'
+    model_path = base_dir / f'../../models/xgboost_model_without{target}.pkl'
 
     # Remove 'temperature', 'humidity', 'wind_speed', 'precipitation', 'snow_amount' from NUM_FEATURES
     NUM_FEATURES = ['hour', 'dayofweek', 'month']
