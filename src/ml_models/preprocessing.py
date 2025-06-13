@@ -100,6 +100,10 @@ def train_test_data(path: str | Path,
     df = load_and_rename(path, subset)
     df = extract_datetime_features(df)
 
+    # Ensure the target column is present
+    if target not in df.columns:
+        raise ValueError(f"Target column '{target}' not found in the DataFrame.")
+
     # If delay_minutes is the target, remove it from the feature list
     if target == 'delay_minutes':
         cat_features = [f for f in cat_features if f != 'delay_minutes']
@@ -128,5 +132,5 @@ def train_test_data(path: str | Path,
     return train_test_split(X, y, test_size=test_size, random_state=random_state)
 
 # Feature lists
-CAT_FEATURES = ['start_station', 'end_station', 'train_name', 'weather']
+CAT_FEATURES = ['start_station', 'end_station', 'train_name']
 NUM_FEATURES = ['hour', 'dayofweek', 'month', 'temperature', 'humidity', 'wind_speed', 'precipitation', 'snow_amount', 'delay_minutes']

@@ -59,7 +59,7 @@ def train_xgboost_gridsearch(subset: int | str = 'all'):
         param_grid,
         cv=3,
         scoring='neg_root_mean_squared_error',
-        n_jobs=2,
+        n_jobs=-1,
         verbose=2
     )
     print("Starting GridSearchCV for XGBoost...")

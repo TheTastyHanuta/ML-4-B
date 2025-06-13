@@ -10,13 +10,14 @@ import numpy as np
 import pickle
 import xgboost
 
-def train_xgboost_without_weather(subset: int | str = 'all'):
+def train_xgboost_without_weather(subset: int | str = 'all', target: str = 'delay_minutes'):
     """
     Train an XGBoost model on the Bahn sub-trip data without weather conditions.
     This function loads the preprocessed data, defines a preprocessing and model pipeline,
     trains the model, evaluates it, and saves the metrics and model to files.
     :param subset: The subset of data to use for training. Can be an integer for a specific number of rows,
                    'all' for the entire dataset or leave empty for the entire dataset.
+    :param target: The target variable for the model. Default is 'delay_minutes'. You can also change it to 'canceled'
     :return: None
     """
 
@@ -30,7 +31,6 @@ def train_xgboost_without_weather(subset: int | str = 'all'):
     metrics_path = base_dir / '../../models/xgboost_metrics_without.csv'
     model_path = base_dir / '../../models/xgboost_model_without.pkl'
 
-    CAT_FEATURES.remove('weather')  # Remove weather feature
     # Remove 'temperature', 'humidity', 'wind_speed', 'precipitation', 'snow_amount' from NUM_FEATURES
     NUM_FEATURES = ['hour', 'dayofweek', 'month']
 
@@ -41,7 +41,8 @@ def train_xgboost_without_weather(subset: int | str = 'all'):
         num_features=NUM_FEATURES,
         test_size=0.2,
         random_state=42,
-        subset=subset
+        subset=subset,
+        target=target
     )
 
     # Define the preprocessing and model pipeline

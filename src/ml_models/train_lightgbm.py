@@ -6,13 +6,14 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-def train_lightgbm(subset: int | str = 'all'):
+def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
     """
     Train a LightGBM model on the Bahn sub-trip data with weather conditions.
     This function loads the preprocessed data, trains the model, evaluates it,
     and saves the metrics and model to files.
     :param subset: The subset of data to use for training. Can be an integer for a specific number of rows,
                    'all' for the entire dataset or leave empty for the entire dataset.
+    :param target: The target variable for the model. Default is 'delay_minutes'. You can also change it to 'canceled'
     :return: None
     """
 
@@ -28,7 +29,8 @@ def train_lightgbm(subset: int | str = 'all'):
         num_features=NUM_FEATURES,
         test_size=0.2,
         random_state=42,
-        subset=subset
+        subset=subset,
+        target=target
     )
 
     # Ensure LightGBM-compatible dtypes: convert categorical cols to pandas 'category'
@@ -55,7 +57,7 @@ def train_lightgbm(subset: int | str = 'all'):
     params = {
         'objective': 'regression',
         'metric': 'rmse',
-        'learning_rate': 0.05,
+        'learning_rate': 0.1,
         'verbosity': -1
     }
     '''
@@ -109,6 +111,16 @@ def train_lightgbm(subset: int | str = 'all'):
     metrics_df = pd.DataFrame([metrics])
     metrics_df.to_csv(metrics_path, index=False)
     print("Model and metrics saved successfully.")
+
+    importances = model.feature_importance(importance_type='gain')
+    feature_names = X_train.columns
+    feature_importance_df = pd.DataFrame({
+        'feature': feature_names,
+        'importance': importances
+    }).sort_values(by='importance', ascending=False)
+    feature_importance_df.to_csv(base_dir / '../../models/lightgbm_feature_importance.csv', index=False)
+
+    print(feature_importance_df)
 
 if __name__ == "__main__":
     print("Starting LightGBM model training...")
