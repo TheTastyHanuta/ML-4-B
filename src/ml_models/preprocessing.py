@@ -27,6 +27,10 @@ def load_and_rename(path: str, subset: int | str = "all") -> pd.DataFrame:
     else:
         raise ValueError("Subset must be a positive integer or 'all'.")
 
+    # Convert 'canceled' to 0 and 1
+    if 'canceled' in df.columns:
+        df['canceled'] = df['canceled'].astype(int)
+
     df = df.rename(columns={
         'station': 'start_station',
         'destination_station': 'end_station',
@@ -96,6 +100,16 @@ def train_test_data(path: str | Path,
     df = load_and_rename(path, subset)
     df = extract_datetime_features(df)
 
+    # If canceled is target variable, remove it from the feature list
+    if target == 'canceled':
+        cat_features = [f for f in cat_features if f != 'canceled']
+        num_features = [f for f in num_features if f != 'canceled']
+
+    # If delay_minutes is the target, remove it from the feature list
+    if target == 'delay_minutes':
+        cat_features = [f for f in cat_features if f != 'delay_minutes']
+        num_features = [f for f in num_features if f != 'delay_minutes']
+
     # Remove rows with NaN values in the target column
     df = df.dropna(subset=[target])
 
@@ -109,7 +123,6 @@ def train_test_data(path: str | Path,
 
     return train_test_split(X, y, test_size=test_size, random_state=random_state)
 
-
 # Feature lists
 CAT_FEATURES = ['start_station', 'end_station', 'train_name', 'weather']
-NUM_FEATURES = ['hour', 'dayofweek', 'month', 'temperature', 'humidity', 'wind_speed', 'precipitation', 'snow_amount']
+NUM_FEATURES = ['hour', 'dayofweek', 'month', 'temperature', 'humidity', 'wind_speed', 'precipitation', 'snow_amount', 'canceled', 'delay_minutes']
