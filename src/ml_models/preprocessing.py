@@ -105,6 +105,11 @@ def train_test_data(path: str | Path,
         cat_features = [f for f in cat_features if f != 'canceled']
         num_features = [f for f in num_features if f != 'canceled']
 
+    # If delay_minutes is the target, remove it from the feature list
+    if target == 'delay_minutes':
+        cat_features = [f for f in cat_features if f != 'delay_minutes']
+        num_features = [f for f in num_features if f != 'delay_minutes']
+
     # Remove rows with NaN values in the target column
     df = df.dropna(subset=[target])
 
@@ -120,4 +125,4 @@ def train_test_data(path: str | Path,
 
 # Feature lists
 CAT_FEATURES = ['start_station', 'end_station', 'train_name', 'weather']
-NUM_FEATURES = ['hour', 'dayofweek', 'month', 'temperature', 'humidity', 'wind_speed', 'precipitation', 'snow_amount', 'canceled']
+NUM_FEATURES = ['hour', 'dayofweek', 'month', 'temperature', 'humidity', 'wind_speed', 'precipitation', 'snow_amount', 'canceled', 'delay_minutes']
