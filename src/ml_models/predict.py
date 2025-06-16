@@ -20,7 +20,7 @@ def load_model(model_path: str | Path):
 
 # Load the model
 base_dir = Path(__file__).resolve().parent
-model_path = base_dir / '../../models/lightgbm_model.pkl'
+model_path = base_dir / '../../models/lightgbm_model_delay_minutes.pkl'
 model = load_model(model_path)
 
 # Example input for a single train
@@ -63,3 +63,25 @@ print('Prediction ICE 1108:', prediction[0])
 
 prediction2 = model.predict(sample2[ALL_FEATURES])
 print('Prediction ICE 500:', prediction2[0])
+
+# Add delay minutes to the sample DataFrame
+sample1['delay_minutes'] = prediction[0]
+sample2['delay_minutes'] = prediction2[0]
+
+ALL_FEATURES = CAT_FEATURES + NUM_FEATURES + ['delay_minutes']
+
+# Load cancelled model
+canceled_model = load_model(base_dir / '../../models/lightgbm_model_canceled.pkl')
+# Predict cancellation
+cancellation_prediction = canceled_model.predict(sample1[ALL_FEATURES])
+print('Cancellation Prediction ICE 1108:', cancellation_prediction[0])
+# Predict cancellation for second sample
+cancellation_prediction2 = canceled_model.predict(sample2[ALL_FEATURES])
+print('Cancellation Prediction ICE 500:', cancellation_prediction2[0])
+
+'''
+Prediction ICE 1108: 4.465959811103615
+Prediction ICE 500: 30.139822682872044
+Cancellation Prediction ICE 1108: 0.00028551445178091607
+Cancellation Prediction ICE 500: 0.01010822777836091
+'''
