@@ -2,8 +2,10 @@ import json
 from pathlib import Path
 import pandas as pd
 from datetime import datetime
+import streamlit as st
 from src.ml_models.predict import CAT_FEATURES, ALL_FEATURES, ALL_FEATURES_NO_WEATHER, canceled_model_with_weather, \
     canceled_model_without_weather, model_with_weather, model_without_weather
+import requests
 
 base_dir = Path(__file__).parent.parent.parent.parent
 data_dir = base_dir / "data" / "streamlit_data"
@@ -169,3 +171,41 @@ def get_typical_departure_time(start, end, train_name, date):
     if not most_common_time.empty:
         return pd.to_datetime(most_common_time.iloc[0], format='%H:%M').time()
     return None
+
+def get_weather_forecast_for_station_date(station_name, date):
+    """
+    Fetches weather forecast for a given station and date using OpenWeatherMap API.
+    Returns a dict with temperature, humidity, wind_speed, precipitation, snow_amount.
+    :param station_name: Name of the station (e.g., "Berlin Hbf")
+    :param date: datetime.date for which to get the forecast
+    """
+    # Load API key from streamlit secrets
+    api_key = st.secrets.weather_api_key
+
+    station_ids_path = base_dir / "data/streamlit_data/station_ids.json"
+    with open(station_ids_path, encoding="utf-8") as f:
+        station_ids = json.load(f)
+    city_id = station_ids.get(station_name)
+    if not city_id:
+        return None
+    # OpenWeatherMap API expects cnt as number of days (max 16)
+    url = f"https://api.openweathermap.org/data/2.5/forecast/daily?id={city_id}&cnt=16&appid={api_key}&units=metric"
+    try:
+        resp = requests.get(url)
+        resp.raise_for_status()
+        data = resp.json()
+        # Find the forecast for the requested date
+        for day in data.get("list", []):
+            forecast_date = datetime.utcfromtimestamp(day["dt"]).date()
+            if forecast_date == date:
+                return {
+                    "temperature": day["temp"]["day"],
+                    "humidity": day["humidity"],
+                    "wind_speed": day["speed"],
+                    "precipitation": day.get("rain", 0.0),
+                    "snow_amount": day.get("snow", 0.0)
+                }
+        return None
+    except Exception as e:
+        print(f"Error fetching weather data: {e}")
+        return None

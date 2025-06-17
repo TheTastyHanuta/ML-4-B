@@ -1,6 +1,7 @@
 from pathlib import Path
 import streamlit as st
-from src.streamlit.calculations.predict_helper import load_overview, get_trains_for_route, predict_delay, predict_canceled, get_last_trips, get_typical_departure_time
+from src.streamlit.calculations.predict_helper import load_overview, get_trains_for_route, predict_delay, predict_canceled
+from src.streamlit.calculations.predict_helper import get_last_trips, get_typical_departure_time, get_weather_forecast_for_station_date
 
 # Define the path to the data directory
 path = Path(__file__).parent.parent.parent.parent / "data/streamlit_data"
@@ -46,10 +47,15 @@ if selected_train and date:
     if time is None:
         st.warning("Fehler bei der Abfahrtszeitbestimmung. Bitte überprüfen Sie die Eingaben oder wähle einen anderen Zug. Wenn das Problem weiterhin besteht, bitte ein Issue auf GitHub erstellen.")
     else:
-        prediction = predict_delay(start, end, selected_train, date, time, weather)
+        weather_data = None
+        if weather:
+            weather_data = get_weather_forecast_for_station_date(start, date)
+            if weather_data is None:
+                st.warning("Keine Wetterdaten für diese Station und dieses Datum gefunden. Die Vorhersage verwendet Standardwerte.")
+        prediction = predict_delay(start, end, selected_train, date, time, weather, weather_data)
         st.success(f"Prognostizierte Verspätung: {prediction:.1f} Minuten")
         st.divider()
-        canceled_prob = predict_canceled(start, end, selected_train, date, time, prediction, weather)
+        canceled_prob = predict_canceled(start, end, selected_train, date, time, prediction, weather, weather_data)
         st.info(f"Prognostizierte Ausfallwahrscheinlichkeit: {canceled_prob:.2%}")
 
         # --- Display Last Trips ---
