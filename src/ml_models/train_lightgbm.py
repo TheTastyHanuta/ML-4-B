@@ -4,6 +4,7 @@ from pathlib import Path
 import pickle
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.model_selection import KFold
 import pandas as pd
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
@@ -92,6 +93,8 @@ def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
     y_pred = model.predict(X_test, num_iteration=model.best_iteration)
 
     if target == 'delay_minutes':
+        # Cross validation for RMSE
+        cross_val_rmse(X_train, y_train, params, CAT_FEATURES)
         mse = mean_squared_error(y_test, y_pred)
         rmse = np.sqrt(mse)
         mae = mean_absolute_error(y_test, y_pred)
@@ -133,6 +136,32 @@ def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
     }).sort_values(by='importance', ascending=False)
     feature_importance_df.to_csv(feature_importance_path, index=False)
     print(feature_importance_df)
+
+def cross_val_rmse(X, y, params, cat_features, n_splits=5):
+    print("Performing cross-validation for RMSE...")
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
+    rmses = []
+    for train_idx, val_idx in kf.split(X):
+        X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
+        y_train, y_val = y.iloc[train_idx], y.iloc[val_idx]
+        for col in CAT_FEATURES:
+            X_train.loc[:, col] = X_train[col].astype('category')
+            X_val.loc[:, col] = X_val[col].astype('category')
+        train_data = lgb.Dataset(X_train, label=y_train, categorical_feature=cat_features, free_raw_data=False)
+        val_data = lgb.Dataset(X_val, label=y_val, categorical_feature=cat_features, free_raw_data=False)
+        model = lgb.train(
+            params,
+            train_data,
+            num_boost_round=10000,
+            valid_sets=[val_data],
+            callbacks=[lgb.early_stopping(stopping_rounds=100)],
+        )
+        y_pred = model.predict(X_val, num_iteration=model.best_iteration)
+        rmse = np.sqrt(mean_squared_error(y_val, y_pred))
+        rmses.append(rmse)
+    print(f"Mean CV RMSE: {np.mean(rmses):.3f} ± {np.std(rmses):.3f}")
+    return rmses
+
 
 if __name__ == "__main__":
     print("Starting LightGBM model training...")
