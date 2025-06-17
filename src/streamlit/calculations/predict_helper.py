@@ -142,3 +142,30 @@ def get_last_trips(start, end, train_name, date, time, n=5):
     filtered['abs_time_diff'] = (filtered['departure_time_origin'] - target_dt).abs()
     filtered = filtered.sort_values('abs_time_diff').head(n)
     return filtered[['departure_time_origin', 'delay_at_dest', 'canceled']]
+
+def get_typical_departure_time(start, end, train_name, date):
+    """
+    Returns the most common departure time (as datetime.time) for the given train, route, and weekday.
+    If no time is found, returns None.
+    :param start: Departure station
+    :param end: Arrival station
+    :param train_name: Train name
+    :param date: datetime.date
+    :return: datetime.time or None
+    """
+    subtrips_path = base_dir / "data/bahn_data/processed/subtrips_data.parquet"
+    if not subtrips_path.exists():
+        return None
+    df = pd.read_parquet(subtrips_path)
+    filtered = df[(df['origin_station'] == start) & (df['destination_station'] == end) & (df['train_name'] == train_name)]
+    if filtered.empty:
+        return None
+    filtered['departure_time_origin'] = pd.to_datetime(filtered['departure_time_origin'])
+    filtered = filtered[filtered['departure_time_origin'].dt.weekday == date.weekday()]
+    if filtered.empty:
+        return None
+    filtered['dep_time_str'] = filtered['departure_time_origin'].dt.strftime('%H:%M')
+    most_common_time = filtered['dep_time_str'].mode()
+    if not most_common_time.empty:
+        return pd.to_datetime(most_common_time.iloc[0], format='%H:%M').time()
+    return None

@@ -1,6 +1,6 @@
 from pathlib import Path
 import streamlit as st
-from src.streamlit.calculations.predict_helper import load_overview, get_trains_for_route, predict_delay, predict_canceled, get_last_trips
+from src.streamlit.calculations.predict_helper import load_overview, get_trains_for_route, predict_delay, predict_canceled, get_last_trips, get_typical_departure_time
 
 # Define the path to the data directory
 path = Path(__file__).parent.parent.parent.parent / "data/streamlit_data"
@@ -27,12 +27,8 @@ with col3:
 
 st.divider()
 
-# --- Select Date and Time ---
-date_col, time_col = st.columns(2)
-with date_col:
-    date = st.date_input("Datum", value=None)
-with time_col:
-    time = st.time_input("Uhrzeit", value=None)
+# --- Select Date ---
+date = st.date_input("Datum", value=None)
 
 st.divider()
 
@@ -45,23 +41,27 @@ with filter_col:
 st.divider()
 
 # --- Display Prediction ---
-if selected_train and date and time:
-    prediction = predict_delay(start, end, selected_train, date, time, weather)
-    st.success(f"Prognostizierte Verspätung: {prediction:.1f} Minuten")
-    st.divider()
-    canceled_prob = predict_canceled(start, end, selected_train, date, time, prediction, weather)
-    st.info(f"Prognostizierte Ausfallwahrscheinlichkeit: {canceled_prob:.2%}")
-
-    # --- Display Last Trips ---
-    last_trips = get_last_trips(start, end, selected_train, date, time, n=5)
-    st.markdown("**Die 5 Zugfahrten, die zeitlich am nächsten liegen:**")
-    if last_trips is not None and not last_trips.empty:
-        last_trips = last_trips.rename(columns={
-            'departure_time_origin': 'Abfahrtszeit',
-            'delay_at_dest': 'Verspätung am Ziel (min)',
-            'canceled': 'Ausgefallen'
-        })
-        last_trips['Ausgefallen'] = last_trips['Ausgefallen'].apply(lambda x: 'Ja' if x == 1 else 'Nein')
-        st.dataframe(last_trips)
+if selected_train and date:
+    time = get_typical_departure_time(start, end, selected_train, date)
+    if time is None:
+        st.warning("Fehler bei der Abfahrtszeitbestimmung. Bitte überprüfen Sie die Eingaben oder wähle einen anderen Zug. Wenn das Problem weiterhin besteht, bitte ein Issue auf GitHub erstellen.")
     else:
-        st.warning("Keine Fahrtdaten gefunden.")
+        prediction = predict_delay(start, end, selected_train, date, time, weather)
+        st.success(f"Prognostizierte Verspätung: {prediction:.1f} Minuten")
+        st.divider()
+        canceled_prob = predict_canceled(start, end, selected_train, date, time, prediction, weather)
+        st.info(f"Prognostizierte Ausfallwahrscheinlichkeit: {canceled_prob:.2%}")
+
+        # --- Display Last Trips ---
+        last_trips = get_last_trips(start, end, selected_train, date, time, n=5)
+        st.markdown("**Die 5 Zugfahrten, die zeitlich am nächsten liegen:**")
+        if last_trips is not None and not last_trips.empty:
+            last_trips = last_trips.rename(columns={
+                'departure_time_origin': 'Abfahrtszeit',
+                'delay_at_dest': 'Verspätung am Ziel (min)',
+                'canceled': 'Ausgefallen'
+            })
+            last_trips['Ausgefallen'] = last_trips['Ausgefallen'].apply(lambda x: 'Ja' if x == 1 else 'Nein')
+            st.dataframe(last_trips)
+        else:
+            st.warning("Keine Fahrtdaten gefunden. Bitte überprüfen Sie die Eingaben oder wählen Sie einen anderen Zug. Wenn das Problem weiterhin besteht, bitte ein Issue auf GitHub erstellen.")
