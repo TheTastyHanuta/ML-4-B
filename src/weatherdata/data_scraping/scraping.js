@@ -29,7 +29,7 @@ const staedte = JSON.parse(fs.readFileSync("../stationsextraction/stations_extra
 let datadump =  JSON.parse(fs.readFileSync("./scrapedData/scrapedData.json", "utf-8"));
 
 // Set constants for the API-request
-const API_KEY = "1961fb1384d6bcc3fb39acdf228beb96";
+const API_KEY = "API Key here";
 const CNT = 168;
 let hi = 0;
 
