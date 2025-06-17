@@ -27,7 +27,7 @@ def compute_all():
     # Read parquet files
     data_dir = Path(data_dir)
     print(f"Reading data from {data_dir}")
-    files = sorted(data_dir.glob("*.parquet"))[-4:]
+    files = sorted(data_dir.glob("*.parquet"))
     df_list = [pd.read_parquet(fp)[["delay_in_min", "station", "is_canceled", "train_type"]] for fp in files]
     df = pd.concat(df_list, ignore_index=True)
 
