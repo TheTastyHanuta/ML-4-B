@@ -43,19 +43,26 @@ st.divider()
 
 # --- Display Prediction ---
 if selected_train and date:
+    from datetime import date as dt_date
+    days_ahead = (date - dt_date.today()).days
+    use_weather = weather
+    weather_data = None
+    if weather and days_ahead > 16:
+        st.warning("Wetterdaten können nur für maximal 16 Tage im Voraus abgerufen werden. Die Vorhersage erfolgt ohne Wetterdaten.")
+        use_weather = False
+    elif weather:
+        weather_data = get_weather_forecast_for_station_date(start, date)
+        if weather_data is None:
+            st.warning("Keine Wetterdaten für diese Station und dieses Datum gefunden. Die Vorhersage erfolgt ohne Wetterdaten.")
+            use_weather = False
     time = get_typical_departure_time(start, end, selected_train, date)
     if time is None:
         st.warning("Fehler bei der Abfahrtszeitbestimmung. Bitte überprüfen Sie die Eingaben oder wähle einen anderen Zug. Wenn das Problem weiterhin besteht, bitte ein Issue auf GitHub erstellen.")
     else:
-        weather_data = None
-        if weather:
-            weather_data = get_weather_forecast_for_station_date(start, date)
-            if weather_data is None:
-                st.warning("Keine Wetterdaten für diese Station und dieses Datum gefunden. Die Vorhersage verwendet Standardwerte.")
-        prediction = predict_delay(start, end, selected_train, date, time, weather, weather_data)
+        prediction = predict_delay(start, end, selected_train, date, time, use_weather, weather_data)
         st.success(f"Prognostizierte Verspätung: {prediction:.1f} Minuten")
         st.divider()
-        canceled_prob = predict_canceled(start, end, selected_train, date, time, prediction, weather, weather_data)
+        canceled_prob = predict_canceled(start, end, selected_train, date, time, prediction, use_weather, weather_data)
         st.info(f"Prognostizierte Ausfallwahrscheinlichkeit: {canceled_prob:.2%}")
 
         # --- Display Last Trips ---
