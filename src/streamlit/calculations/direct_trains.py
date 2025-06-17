@@ -113,15 +113,15 @@ if __name__ == "__main__":
         "departure_change_time",
     ]
 
-    last_full_months = sorted(data_dir.glob("*.parquet"))[-1:]
+    last_full_months = sorted(data_dir.glob("*.parquet"))
 
     direct_train_dict = {}
-    print("Processing Month 1/3")
-    populate_direct_train_dict(pd.read_parquet(last_full_months[0]), direct_train_dict)
-    #print("Processing Month 2/3")
-    #populate_direct_train_dict(pd.read_parquet(last_full_months[1], columns=columns), direct_train_dict)
-    #print("Processing Month 3/3")
-    #populate_direct_train_dict(pd.read_parquet(last_full_months[2], columns=columns), direct_train_dict)
+    # Process each month's data
+    for file_path in tqdm(last_full_months, desc="Processing months", mininterval=2.0, smoothing=0.4, miniters=1):
+        print(f"Processing {file_path.name}")
+        df = pd.read_parquet(file_path, columns=columns)
+        populate_direct_train_dict(df, direct_train_dict)
+
     print("Calculating Stats")
     calculate_stats_and_save(direct_train_dict, save_dir)
 

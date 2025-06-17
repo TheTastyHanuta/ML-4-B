@@ -1,7 +1,8 @@
 from src.ml_models.train_lightgbm import train_lightgbm
 from src.ml_models.train_xgboost import train_xgboost
 from src.ml_models.train_xgboost_without import train_xgboost_without_weather
-from src.process_data import transform_and_save, map_weather_and_save
+from src.data_processing.process_data import transform_and_save, map_weather_and_save
+
 
 def main():
     """
@@ -12,7 +13,7 @@ def main():
     :return: None
     """
 
-    # Uncomment the following lines to enable data processing
+    # Uncomment the following lines to enable data transformation and saving
 
     #print("Starting data processing...")
     #transform_and_save(bahn=True, weather=False)

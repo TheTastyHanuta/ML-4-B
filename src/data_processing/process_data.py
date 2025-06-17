@@ -19,9 +19,9 @@ def transform_and_save(bahn: bool = True, weather: bool = True) -> None:
     if bahn:
         print("Starting bahn data transformation...")
         # Call the transform_data function to process the data
-        transformed_bahn = transform_bahn(path="../data/bahn_data")
+        transformed_bahn = transform_bahn(path="../../data/bahn_data")
         # Save the transformed bahn data to a parquet file
-        bahn_output_path = Path("../data/bahn_data/processed/subtrips_data.parquet")
+        bahn_output_path = Path("../../data/bahn_data/processed/subtrips_data.parquet")
         print("Saving bahn data DataFrame as Parquet...")
         transformed_bahn.to_parquet(bahn_output_path, index=False, engine="pyarrow")
 
@@ -30,7 +30,7 @@ def transform_and_save(bahn: bool = True, weather: bool = True) -> None:
         # Call the transform_weather function to process the weather data
         transformed_weather = transform_weather(path="weatherdata/data_scraping/scrapedData/scrapedData.json")
         # Save the transformed weather data to a parquet file
-        weather_output_path = Path("../data/weather_data/weather_data.parquet")
+        weather_output_path = Path("../../data/weather_data/weather_data.parquet")
         print("Saving weather data DataFrame as Parquet...")
         transformed_weather.to_parquet(weather_output_path, index=False, engine="pyarrow")
 
@@ -43,10 +43,10 @@ def map_weather_and_save() -> None:
     :return: None
     """
     # Load the transformed data
-    transformed_bahn_data = pd.read_parquet(Path("../data/bahn_data/processed/subtrips_data.parquet"), engine="pyarrow")
+    transformed_bahn_data = pd.read_parquet(Path("../../data/bahn_data/processed/subtrips_data.parquet"), engine="pyarrow")
 
     # Load the weather data
-    weather_data = pd.read_parquet(Path("../data/weather_data/weather_data.parquet"), engine="pyarrow")
+    weather_data = pd.read_parquet(Path("../../data/weather_data/weather_data.parquet"), engine="pyarrow")
 
     # Map the weather data to the transformed data
     print("Mapping weather data to sub-trips...")
@@ -59,7 +59,7 @@ def map_weather_and_save() -> None:
     print(merged_data.head())
 
     # Save the merged data to a new parquet file
-    output_path = Path("../data/subtrips_with_weather.parquet")
+    output_path = Path("../../data/subtrips_with_weather.parquet")
     print("Saving merged data DataFrame as Parquet...")
     merged_data.to_parquet(output_path, index=False, engine="pyarrow")
 
