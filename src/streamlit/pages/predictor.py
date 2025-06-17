@@ -1,0 +1,67 @@
+from pathlib import Path
+import streamlit as st
+from src.streamlit.calculations.predict_helper import load_overview, get_trains_for_route, predict_delay, predict_canceled, get_last_trips
+
+# Define the path to the data directory
+path = Path(__file__).parent.parent.parent.parent / "data/streamlit_data"
+
+st.set_page_config(page_title="Vorhersagen", layout="wide")
+st.title("Zug Vorhersagen")
+
+# --- Load data ---
+@st.cache_data
+def get_overview(path=path / "direct_train_overview.json"):
+    return load_overview(path)
+
+overview = get_overview()
+
+# --- Select Route ---
+col1, col2, col3 = st.columns([2,2,2])
+with col1:
+    start = st.selectbox("Startbahnhof", sorted(overview.keys()))
+with col2:
+    end = st.selectbox("Zielbahnhof", sorted(overview.get(start, {}).keys()))
+with col3:
+    trains = get_trains_for_route(start, end)
+    selected_train = st.selectbox("Zug", trains) if trains else st.warning("Keine Direktverbindung gefunden.")
+
+st.divider()
+
+# --- Select Date and Time ---
+date_col, time_col = st.columns(2)
+with date_col:
+    date = st.date_input("Datum", value=None)
+with time_col:
+    time = st.time_input("Uhrzeit", value=None)
+
+st.divider()
+
+# --- Filter Options ---
+filter_col, _ = st.columns([1,3])
+with filter_col:
+    st.markdown("**Filter**")
+    weather = st.checkbox("Wetterdaten einbeziehen", value=True)
+
+st.divider()
+
+# --- Display Prediction ---
+if selected_train and date and time:
+    prediction = predict_delay(start, end, selected_train, date, time, weather)
+    st.success(f"Prognostizierte Verspätung: {prediction:.1f} Minuten")
+    st.divider()
+    canceled_prob = predict_canceled(start, end, selected_train, date, time, prediction, weather)
+    st.info(f"Prognostizierte Ausfallwahrscheinlichkeit: {canceled_prob:.2%}")
+
+    # --- Display Last Trips ---
+    last_trips = get_last_trips(start, end, selected_train, date, time, n=5)
+    st.markdown("**Die 5 Zugfahrten, die zeitlich am nächsten liegen:**")
+    if last_trips is not None and not last_trips.empty:
+        last_trips = last_trips.rename(columns={
+            'departure_time_origin': 'Abfahrtszeit',
+            'delay_at_dest': 'Verspätung am Ziel (min)',
+            'canceled': 'Ausgefallen'
+        })
+        last_trips['Ausgefallen'] = last_trips['Ausgefallen'].apply(lambda x: 'Ja' if x == 1 else 'Nein')
+        st.dataframe(last_trips)
+    else:
+        st.warning("Keine Fahrtdaten gefunden.")
