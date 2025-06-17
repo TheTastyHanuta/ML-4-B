@@ -26,17 +26,35 @@ data = load_json_data()
 
 # Display statistics
 st.subheader("Statistiken")
-st.json(data)
+
+zugtypen = [
+    ("all", "Alle Züge"),
+    ("ICE", "ICE"),
+    ("IC", "IC"),
+    ("RE", "RE"),
+    ("RB", "RB"),
+    ("S", "S-Bahn")
+]
+
+for key, name in zugtypen:
+    with st.expander(f"{name}", expanded=(key=="all")):
+        cols = st.columns(4)
+        cols[0].metric("Pünktlich", data.get(f"puenktlich_{key}", "-"))
+        cols[1].metric("Durchschn. Verspätung", data.get(f"durchschnittliche_verspaetung_{key}", "-"))
+        cols[2].metric("Ausgefallen", data.get(f"ausgefallen_{key}", "-"))
+        cols[3].metric("Zughalte", f"{data.get(f'summe_zughalte_{key}', '-'):,}")
 
 # Display the images from data folder
-st.image(
-    path / "cumulative_distribution.png",
-    caption="Deutsche Bahn – Kumulative Verteilung",
-    use_container_width=True,
-)
-
-st.image(
-    path / "delay_distribution.png",
-    caption="Deutsche Bahn – Delay-Verteilung",
-    use_container_width=True,
-)
+col1, col2 = st.columns(2)
+with col1:
+    st.image(
+        path / "cumulative_distribution.png",
+        caption="\n**Kumulative Verteilung**",
+        use_container_width=True,
+    )
+with col2:
+    st.image(
+        path / "delay_distribution.png",
+        caption="\n**Delay-Verteilung**",
+        use_container_width=True,
+    )

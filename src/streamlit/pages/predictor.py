@@ -78,3 +78,9 @@ if selected_train and date:
             st.dataframe(last_trips)
         else:
             st.warning("Keine Fahrtdaten gefunden. Bitte überprüfen Sie die Eingaben oder wählen Sie einen anderen Zug. Wenn das Problem weiterhin besteht, bitte ein Issue auf GitHub erstellen.")
+
+# --- Footer ---
+st.markdown("""
+---
+Datenbasis: Deutsche Bahn, gesammelt vom 2025-01-01 bis 2025-05-31.
+""")

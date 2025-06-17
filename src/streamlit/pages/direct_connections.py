@@ -48,5 +48,5 @@ if start and end:
 # --- Footer ---
 st.markdown("""
 ---
-Datenbasis: Deutsche Bahn, gesammelt vom 2025-02-01 bis 2025-05-01
+Datenbasis: Deutsche Bahn, gesammelt vom 2025-01-01 bis 2025-05-31.
 """)
