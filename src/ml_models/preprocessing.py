@@ -108,12 +108,11 @@ def train_test_data(path: str | Path,
     if target == 'delay_minutes':
         cat_features = [f for f in cat_features if f != 'delay_minutes']
         num_features = [f for f in num_features if f != 'delay_minutes']
+        # Remove outliers in the target column
+        df = df[(df[target] >= -10) & (df[target] <= 180)]
 
     # Remove rows with NaN values in the target column
     df = df.dropna(subset=[target])
-
-    # Remove outliers in the target column
-    df = df[(df[target] >= -10) & (df[target] <= 180)]
 
     # Remove rows with NaN values in the feature columns
     df = df.dropna(subset=cat_features + num_features)
