@@ -58,33 +58,40 @@ ML-4-B
 │   │   └── processed
 │   ├── streamlit_data
 │   └── weather_data
+├── models
 ├── src
 │   ├── data_processing
 │   │   ├── transform_bahn.py
 │   │   ├── transform_weather.py
-│   │   └── map_weather.py
+│   │   ├── map_weather.py
+│   │   └── process_data.py
 │   ├── exploration
 │   │   ├── exploration.ipynb
 │   │   ├── to_csv.py
 │   │   └── weather_exploration.ipynb
 │   ├── ml_models
-│   │   ├── data_preparation.py
-│   │   ├── train.py
-│   │   └── predict.py
+│   │   ├── predict.py
+│   │   ├── preprocessing.py
+│   │   ├── train_lightgbm.py
+│   │   ├── train_lightgbm_without.py
+│   │   ├── train_xgboost.py
+│   │   └── train_xgboost_without.py
 │   ├── streamlit
 │   │   ├── calulcations
+│   │   │   ├── direct_helper.py
+│   │   │   ├── direct_trains.py
 │   │   │   ├── overview.py 
-│   │   │   └── direct_train.py
+│   │   │   ├── predict_helper.py
+│   │   │   └── worst_stations.py
 │   │   ├── pages
-│   │   └── Home.py
+│   │   └── main.py
 │   ├── weatherdata
 │   │   ├── data_scraping
 │   │   │   ├── scrapedData
 │   │   │   ├── json-schema.json
 │   │   │   └── scraping.js
-│   │   ├── stationsextraction
-│   │   └── testing
-│   └── process_data.py
+│   │   └── stationsextraction
+│   └── init.py
 ├── requirements.txt
 ├── README.md
 └── LICENSE
@@ -92,9 +99,9 @@ ML-4-B
 
 ## 2 Related Work
 
-- [David Kriesel](https://www.dkriesel.com/blog/2019/1229_video_und_folien_meines_36c3-vortrags_bahnmining)
+- Vortrag von [David Kriesel](https://www.dkriesel.com/blog/2019/1229_video_und_folien_meines_36c3-vortrags_bahnmining)
 - Projekt von [Theo Döllmann](https://gitlab.com/bahnvorhersage/bahnvorhersage)
-- [Bahnvorhersagen.de](https://bahnvorhersage.de/blog)
+  - [Bahnvorhersagen.de](https://bahnvorhersage.de/blog)
 
 ## 3 Methodology
 
@@ -126,84 +133,91 @@ ML-4-B
 
 - Keine historischen Daten für Zugfahren über Deutsche Bahn API abrufbar
 - Daten aus GitHub von [piebro](https://github.com/piebro/deutsche-bahn-data)
-- Wetterdaten über API mit einem Call pro Bahnhof, stündliche Wetterdaten für große Fernverkehrsbahnhöfe
 
 #### Wetterdaten
 
 - Wetterdaten über [openweather API](https://openweathermap.org/history)
 - Stündliche Wetterdaten für Fernverkehrsbahnhöfe in Deutschland
 - API erlaubt es, Daten für das letzte Jahr abzurufen
-- JavaScript für das Abrufen der Daten geschrieben
-
-#### Donnerstag, 22.05.2025
-
-- **Ziel:** Über eine API stündliche Wetterdaten aus der Vergangenheit für alle 107 Fernverkehrsbahnhöfe in Deutschland abrufen  
-- Die API erlaubt es, genau 1 Jahr in die Vergangenheit zurückzugehen  
-- Pro Anfrage erhalten wir 168 Datensätze = 7 Tage stündliche Wetterdaten  
-- Um ein Jahr abzudecken: 52 Anfragen pro Bahnhof  
-- Insgesamt: **5.564 API-Anfragen** (52 × 107)
-
-#### So funktioniert der Code jetzt
-
-- Holt für jeden Bahnhof Daten in 7-Tages-Schritten  
-- Genau 168 Einträge pro Anfrage  
-- Zuordnung der Bahnhöfe über `city_ID` gemäß API-Dokumentation  
-- Pro Bahnhof werden die Daten separat gespeichert  
-- Der Code merkt sich automatisch den letzten Stand und setzt dort bei erneutem Lauf fort  
-
-#### (( Fehlerbehandlung
-
-- Ursprünglich: Abbruch bei <168 Datensätzen → Annahme: keine Daten mehr verfügbar  
-- Beobachtung: API liefert manchmal zu früh zu wenige Daten  
-- Vermutung: verteilte Speicherung → einzelne Datenbanken liefern vorzeitig weniger zurück  
-- Lösung: Der Code wartet nun gezielt auf eine **klare Fehlermeldung** der API, bevor er abbricht  
-- Ziel: Sicherstellen, dass **alle** verfügbaren Daten abgeholt werden
-))
+- JavaScript für das Abrufen der Daten 
 
 ### 3.3 Data Understanding and Preparation
 
-- Bahn Data exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration/exploration.ipynb)^
-  - Informationen zu Zugfahrten, Verspätungen und Ausfällen pro Station einer Zugfahrt seit 2025
+- Bahn Data exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration/exploration.ipynb)
+  - Informationen jeder Station einer Zugfahrt mit Informationen über die Zugfahrt an dieser Station
   - `Station, Zugnummer, Verspätung, Zugtyp, Zielbahnhof, Abfahrtszeit, Ausfall, Ankunftszeit`
-  - ca. 3 Mio. Einträge
+  - ca. 4 Mio. Einträge
   - 107 Fernverkehrsbahnhöfe in Deutschland
 - Wetter Data exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration/weather_exploration.ipynb)
   - Stündliche Wetterdaten für Fernverkehrsbahnhöfe in Deutschland
   - `Zeitstempel, Wettertyp, Temperatur, Niederschlag, Windgeschwindigkeit, Luftfeuchtigkeit, Schneefall`
   - ca. 5.564 Einträge pro Bahnhof
   - Insgesamt 375.000 Zeilen
-  - Daten von [openweather API](https://openweathermap.org/history)
 - Data preparation:
   - Wetterdaten von JSON in DataFrame umwandeln
+  - Bahndaten transformieren, sodass jede Zeile eine Zugfahrt repräsentiert
+    - `ride_id, train_name, station, destination_station, departure_time_origin, day_of_week, hour_of_day, delay_at_destination, canceled, time, weather...`
   - Bahndaten und Wetterdaten zusammenführen
   - Feature Engineering:
-    - Wetterdaten in relevante Features umwandeln (z.B. Temperatur, Niederschlag)
+    - Wetterdaten in relevante Features umwandeln (Temperatur, Niederschlag, usw.)
     - Zeitstempel in Datetime-Format umwandeln
     - Fehlende Werte behandeln
-    - Normalisierung der Daten
     - Weitere Spalten hinzufügen (Wochentag, Stunde)
-    - Kategorische Variablen in numerische umwandeln
-    - Unnötige Spalten entfernen (`train_line_ride_id`, `train_type`, `arrival_time`, `departure_time`)
-    - Alle Fahrten die nicht ICE sind entfernen
-  - Feature Selection:
-    - Relevante Features auswählen (z.B. Temperatur, Niederschlag, Wochentag, Feiertag)
-    - Zielvariable definieren (z.B. Verspätung, Ausfall)
+    - Unnötige Spalten entfernen (`train_line_ride_id`, `train_type`)
+    - Alle Fahrten die nicht ICE oder IC sind entfernen
+    - Zielvariable definieren (Verspätung, Ausfall)
   - Daten in Trainings- und Testset aufteilen
 
 ### 3.4 Modeling and Evaluation
 
-- Describe the model architecture(s) you selected
-- XGBoost Classifier
-- Describe how you train your models
-- Describe how you evaluate your models/ which metrics you use
+- XGBoost & LightGBM für Regression und Classification
+- Features: 
+  - Training mit allen Features: `start_station, end_station, train_name, hour, day_of_week, month, temperature, precipitation, wind_speed, humidity, snow, (delay_minutes)`
+  - Training ohne Wetterdaten: `start_station, end_station, train_name, hour, day_of_week, month, (delay_minutes)`
+- XGBoost:
+  - Training der Modelle auf Trainingsset
+  - Evaluation der Modelle auf Testset
+  - Metriken: Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), R² Score, Accuracy, Precision, Recall, F1 Score
+- LightGBM:
+  - Training der Modelle auf Trainingsset
+  - Evaluation der Modelle auf Testset
+  - Metriken: Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), R² Score, Accuracy, Precision, Recall, F1 Score
+- Hyperparameter Tuning:
+  - Grid Search und Random Search für die Optimierung der Hyperparameter (ToDo: noch besser implementieren)
 
 ## 4 Results
 
-- Describe what artifacts you have build
-- Describe the libraries and tools you use
-- Describe the concept of your app
-- Describe the results you achieve by applying your trained models on unseen data
-- Descriptive Language (no judgement, no discussion in this section -> just show what you built)
+- Artifacts:
+  - Jupyter Notebooks für die Datenexploration
+  - Python-Skripte für die Datenverarbeitung und Modelltraining
+  - Streamlit App zur Visualisierung der Vorhersagen
+  - Trainierte Modelle für die Vorhersage von Verspätungen und Ausfällen
+- Libraries:
+  - XGBoost und LightGBM für die Modellierung
+  - Pandas und NumPy für die Datenverarbeitung
+  - Streamlit für die Web-App
+- Konzept: 
+  - Vorhersage von Verspätungen und Ausfällen von ICEs basierend auf historischen Zugfahrten und Wetterdaten
+  - Angabe von Start- und Zielbahnhof, Zugnummer, Datum --> Vorhersage der Verspätung und Ausfallwahrscheinlichkeit
+- Ergebnisse:
+  - Modelle können Ausfälle mit einer Genauigkeit von ca. 70% vorhersagen
+  - Verspätungen können mit einer Genauigkeit von ca. 10 Minuten vorhergesagt werden (Still works in progress)
+  - Wetterdaten haben einen Einfluss auf die Pünktlichkeit der Züge
+  - Modelle können weiter verbessert werden durch:
+    - Bessere Datenqualität (z.B. mehr historische Daten)
+    - Hyperparameter Tuning
+- Descriptive Language
+  - Die Modelle sind in der Lage, die Pünktlichkeit von ICEs zu prognostizieren, indem sie historische Zugfahrten und Wetterdaten analysieren.
+  - Die Genauigkeit der Vorhersagen variiert je nach Modell und Feature-Auswahl.
+  - Die Ergebnisse zeigen, dass Wetterbedingungen einen signifikanten Einfluss auf die Pünktlichkeit der Züge haben.
+  - Die entwickelten Modelle können als Grundlage für weitere Forschungen und Anwendungen dienen.
+  - Die Vorhersagen können Bahnreisenden helfen, ihre Reisen besser zu planen und mögliche Verspätungen zu vermeiden.
+  - Die Web-App ermöglicht es Nutzern, die Vorhersagen einfach und intuitiv abzurufen.
+  - Die bereitgestellten Daten und Modelle können von der Community genutzt und weiterentwickelt werden.
+  - Die Ergebnisse und Modelle sind nicht perfekt und können weiter verbessert werden, insbesondere durch die Integration weiterer Datenquellen und die Optimierung der Hyperparameter.
+  - Die Vorhersagen sind als Hilfestellung gedacht und sollten nicht als 100% zuverlässig angesehen werden.
+  - Die Modelle sind ein erster Schritt in Richtung einer besseren Planung von Bahnreisen und können in Zukunft weiter verfeinert werden.
+  - Die Ergebnisse zeigen, dass es möglich ist, Verspätungen und Ausfälle von ICEs vorherzusagen, jedoch sind die Modelle noch nicht perfekt und benötigen weitere Optimierung.
 
 ## 5 Discussion
 
