@@ -8,7 +8,7 @@ from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
-def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
+def train_lightgbm_without(subset: int | str = 'all', target: str = 'delay_minutes'):
     """
     Train a LightGBM model on the Bahn sub-trip data with weather conditions.
     This function loads the preprocessed data, trains the model, evaluates it,
@@ -168,5 +168,5 @@ def cross_val_rmse(X, y, params, cat_features, n_splits=5):
 
 if __name__ == "__main__":
     print("Starting LightGBM model training...")
-    train_lightgbm(target='delay_minutes')
+    train_lightgbm_without(target='delay_minutes')
     print("Training complete.")
