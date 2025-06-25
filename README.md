@@ -122,7 +122,7 @@ ML-4-B
     - Zielvariable definieren (Verspätung)
     - Daten in Trainings- und Testset aufteilen
 - [Modeling and Evaluation](#34-modeling-and-evaluation)
-  - XGBoost Classifier:
+  - LightGBM Classifier:
     - Modellarchitektur beschreiben
     - Training der Modelle
     - Evaluation der Modelle und Metriken
