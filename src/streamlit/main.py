@@ -58,3 +58,25 @@ with col2:
         caption="\n**Delay-Verteilung**",
         use_container_width=True,
     )
+
+time_dist_path = path / "time_dist" / "uhrzeit"
+
+col3, col4 = st.columns(2)
+with col3:
+    st.image(
+        time_dist_path / "punctuality.png",
+        caption="\n**Pünktlichkeit nach Stunde**",
+        use_container_width=True,
+    )
+with col4:
+    st.image(
+        time_dist_path / "delays.png",
+        caption="\n**Durchschnittliche Verspätung nach Stunde**",
+        use_container_width=True,
+    )
+
+st.image(
+    time_dist_path / "cancellations.png",
+    caption="\n**Ausgefallene Züge pro Monat**",
+    use_container_width=True,
+)
