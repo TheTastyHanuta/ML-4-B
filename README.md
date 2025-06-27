@@ -35,6 +35,7 @@
 - Run the Python scripts in the `src/ml_models` folder to train the models
 - Run the Streamlit app in the `src/streamlit` folder to visualize the predictions
 - Use the `data` folder to store your own data or keep ours
+- Run the `src/init.py` file to transform the data and train all models
 
 ### How is this document structured
 
@@ -155,13 +156,13 @@ ML-4-B
   - Insgesamt 375.000 Zeilen
 - Data preparation:
   - Wetterdaten von JSON in DataFrame umwandeln
+    - Wetterdaten in relevante Features umwandeln (Temperatur, Niederschlag, usw.)
   - Bahndaten transformieren, sodass jede Zeile eine Zugfahrt repräsentiert
     - `ride_id, train_name, station, destination_station, departure_time_origin, day_of_week, hour_of_day, delay_at_destination, canceled, time, weather...`
-  - Bahndaten und Wetterdaten zusammenführen
+  - Bahndaten und Wetterdaten zusammenführen in einen DataFrame
   - Feature Engineering:
-    - Wetterdaten in relevante Features umwandeln (Temperatur, Niederschlag, usw.)
     - Zeitstempel in Datetime-Format umwandeln
-    - Fehlende Werte behandeln
+    - Zeilen mit wichtigen fehlenden Werten entfernen
     - Weitere Spalten hinzufügen (Wochentag, Stunde)
     - Unnötige Spalten entfernen (`train_line_ride_id`, `train_type`)
     - Alle Fahrten die nicht ICE oder IC sind entfernen
@@ -202,9 +203,10 @@ ML-4-B
 - Ergebnisse:
   - Modelle können Ausfälle mit einer Genauigkeit von ca. 70% vorhersagen
   - Verspätungen können mit einer Genauigkeit von ca. 10 Minuten vorhergesagt werden (Still works in progress)
+  - LightGBM genauer als XGBoost
   - Wetterdaten haben einen Einfluss auf die Pünktlichkeit der Züge
   - Modelle können weiter verbessert werden durch:
-    - Bessere Datenqualität (z.B. mehr historische Daten)
+    - Bessere Datenqualität (mehr historische Daten)
     - Hyperparameter Tuning
 - Descriptive Language
   - Die Modelle sind in der Lage, die Pünktlichkeit von ICEs zu prognostizieren, indem sie historische Zugfahrten und Wetterdaten analysieren.
