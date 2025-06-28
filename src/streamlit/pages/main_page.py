@@ -32,8 +32,8 @@ zugtypen = [
     ("all", "Alle Züge"),
     ("ICE", "ICE"),
     ("IC", "IC"),
-    ("NJ", "Nightjet"),
-    ("FLX", "Flixtrain"),
+    ("NJ", "NJ"),
+    ("FLX", "Flix"),
     ("RE", "RE"),
     ("RB", "RB"),
     ("S", "S-Bahn")
