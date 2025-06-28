@@ -17,7 +17,7 @@ def load_json_data():
 data = load_json_data()
 
 st.markdown("""
-Dieses Dashboard ist im Rahmen eines Studentenprojekts im Modul **Machine Learning for Business** entstanden.
+Dieses Streamlit-Seite ist im Rahmen eines Uniprojektes im Modul **Machine Learning for Business** an der FAU entstanden.
 
 **Projektziel:**
 Wir möchten Verspätungen und Ausfälle im deutschen Bahnverkehr anhand historischer Bahndaten vorhersagen. 
@@ -40,8 +40,8 @@ zugtypen = [
 for key, name in zugtypen:
     with st.expander(f"{name}", expanded=(key=="all")):
         cols = st.columns(4)
-        cols[0].metric("Pünktlich", data.get(f"puenktlich_{key}", "-"))
-        cols[1].metric("Durchschn. Verspätung", data.get(f"durchschnittliche_verspaetung_{key}", "-"))
+        cols[0].metric("Pünktliche Stops", data.get(f"puenktlich_{key}", "-"))
+        cols[1].metric("Durchschn. Verspätung pro Halt", data.get(f"durchschnittliche_verspaetung_{key}", "-"))
         cols[2].metric("Ausgefallen", data.get(f"ausgefallen_{key}", "-"))
         cols[3].metric("Zughalte", f"{data.get(f'summe_zughalte_{key}', '-'):,}")
 
