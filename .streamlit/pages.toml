@@ -1,0 +1,24 @@
+[[pages]]
+path = "pages/main_page.py"
+name = "Startseite"
+icon = "🚄"
+
+[[pages]]
+path = "pages/visual.py"
+name = "Diagramme"
+icon = "❤"
+
+[[pages]]
+path = "pages/stations.py"
+name = "Bahn-Stationen"
+icon = "🥴"
+
+[[pages]]
+path = "pages/direct_connections.py"
+name = "Direkte Verbindungen"
+icon = "😱"
+
+[[pages]]
+path = "pages/predictor.py"
+name = "Verspätungsprognose"
+icon = "🤓"

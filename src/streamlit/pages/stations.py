@@ -2,16 +2,10 @@ import streamlit as st
 import pandas as pd
 from pathlib import Path
 
-st.set_page_config(
-    page_title="Deutsche Bahn Bahnhof Statistik",
-    layout="wide"
-)
-
 # Define the path to the data directory
 path = Path(__file__).parent.parent.parent.parent / "data/streamlit_data"
 
 # --- Title and Description ---
-st.title("Wie ist die durchschnittliche Verspätung pro Bahnhof?")
 st.markdown("""
 Die Tabellen zeigen, wie die durchschnittlichen Verspätungen und Ausfallquote pro Bahnhof sind.
 Dabei ist zu beachten, dass die durchschnittliche Verspätung stark damit zusammenhängt, 

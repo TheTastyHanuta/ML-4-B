@@ -6,9 +6,6 @@ from src.streamlit.calculations.predict_helper import get_last_trips, get_typica
 # Define the path to the data directory
 path = Path(__file__).parent.parent.parent.parent / "data/streamlit_data"
 
-st.set_page_config(page_title="Vorhersagen", layout="wide")
-st.title("Zug Vorhersagen")
-
 # --- Load data ---
 @st.cache_data
 def get_overview(path=path / "direct_train_overview.json"):

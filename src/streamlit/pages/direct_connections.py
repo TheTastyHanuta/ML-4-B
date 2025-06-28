@@ -5,9 +5,6 @@ from src.streamlit.calculations.direct_helper import load_overview, load_route_d
 # Define the path to the data directory
 path = Path(__file__).parent.parent.parent.parent / "data/streamlit_data"
 
-st.set_page_config(page_title="Direktverbindungen", layout="wide")
-st.title("🚆 Schnellste Direktverbindungen")
-
 # --- Load data ---
 @st.cache_data
 def get_overview(path=path / "direct_train_overview.json"):

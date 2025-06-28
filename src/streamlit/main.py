@@ -1,82 +1,14 @@
-import sys
-from pathlib import Path
-sys.path.append(str(Path(__file__).resolve().parents[2]))
-# Create streamlit home page
 import streamlit as st
-import json
-from pathlib import Path
+from st_pages import add_page_title, get_nav_from_toml
 
-# Set the page configuration
-st.set_page_config(
-    page_title="DB-Statistik – Übersicht",
-    layout="wide",
-)
-st.title("Deutsche Bahn – Gesamtübersicht")
+# Set the page configuration via st_pages
+st.set_page_config(layout="wide")
 
-# Define the path to the data directory
-path = Path(__file__).parent.parent.parent / "data/streamlit_data"
+nav = get_nav_from_toml(".streamlit/pages_sections.toml")
 
-# Read and display json data with cacheing
-@st.cache_data
-def load_json_data():
-    with open(path / "data.json", "r") as file:
-        return json.load(file)
+pg = st.navigation(nav)
 
-data = load_json_data()
+add_page_title(pg)
 
-# Display statistics
-st.subheader("Statistiken")
-
-zugtypen = [
-    ("all", "Alle Züge"),
-    ("ICE", "ICE"),
-    ("IC", "IC"),
-    ("RE", "RE"),
-    ("RB", "RB"),
-    ("S", "S-Bahn")
-]
-
-for key, name in zugtypen:
-    with st.expander(f"{name}", expanded=(key=="all")):
-        cols = st.columns(4)
-        cols[0].metric("Pünktlich", data.get(f"puenktlich_{key}", "-"))
-        cols[1].metric("Durchschn. Verspätung", data.get(f"durchschnittliche_verspaetung_{key}", "-"))
-        cols[2].metric("Ausgefallen", data.get(f"ausgefallen_{key}", "-"))
-        cols[3].metric("Zughalte", f"{data.get(f'summe_zughalte_{key}', '-'):,}")
-
-# Display the images from data folder
-col1, col2 = st.columns(2)
-with col1:
-    st.image(
-        path / "cumulative_distribution.png",
-        caption="\n**Kumulative Verteilung**",
-        use_container_width=True,
-    )
-with col2:
-    st.image(
-        path / "delay_distribution.png",
-        caption="\n**Delay-Verteilung**",
-        use_container_width=True,
-    )
-
-time_dist_path = path / "time_dist" / "uhrzeit"
-
-col3, col4 = st.columns(2)
-with col3:
-    st.image(
-        time_dist_path / "punctuality.png",
-        caption="\n**Pünktlichkeit nach Stunde**",
-        use_container_width=True,
-    )
-with col4:
-    st.image(
-        time_dist_path / "delays.png",
-        caption="\n**Durchschnittliche Verspätung nach Stunde**",
-        use_container_width=True,
-    )
-
-st.image(
-    time_dist_path / "cancellations.png",
-    caption="\n**Ausgefallene Züge pro Monat**",
-    use_container_width=True,
-)
+# Run the page navigation
+pg.run()
