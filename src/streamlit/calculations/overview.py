@@ -34,7 +34,7 @@ def compute_all():
     # Calculate statistics
     data_dict = {}
     delay_distributions = {}
-    for t in ["all", "ICE", "IC", "RE", "RB", "S"]:
+    for t in ["all", "ICE", "IC", "NJ", "FLX", "RE", "RB", "S"]:
         df_t = df if t == "all" else df[df["train_type"] == t]
         name = "Alle" if t == "all" else t
 
@@ -62,7 +62,7 @@ def compute_all():
     fig1, ax1 = plt.subplots(figsize=(12, 6))
     x = np.arange(len(LABELS))
     bar_w = 0.15
-    for i, name in enumerate(["Alle", "ICE", "IC", "RE", "RB", "S"]):
+    for i, name in enumerate(["Alle", "ICE", "IC", "NJ", "FLX"]):
         ax1.bar(
             x + i * bar_w,
             delay_distributions[name].values,
@@ -87,7 +87,7 @@ def compute_all():
 
     # Create cumulative distribution
     fig2, ax2 = plt.subplots(figsize=(12, 6))
-    for t in ["all", "ICE", "IC", "RE", "RB", "S"]:
+    for t in ["all", "ICE", "IC", "NJ", "FLX"]:
         df_t = df if t == "all" else df[df["train_type"] == t]
         df_ok = df_t[~df_t["is_canceled"]]
         name = "Alle" if t == "all" else t
