@@ -178,11 +178,10 @@ ML-4-B
 - XGBoost:
   - Training der Modelle auf Trainingsset
   - Evaluation der Modelle auf Testset
-  - Metriken: Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), R² Score, Accuracy, Precision, Recall, F1 Score
 - LightGBM:
   - Training der Modelle auf Trainingsset
   - Evaluation der Modelle auf Testset
-  - Metriken: Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), R² Score, Accuracy, Precision, Recall, F1 Score
+  - Metriken: Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), R² Score für Verspätung und Accuracy, Precision, Recall, F1 Score für Ausfälle
 - Hyperparameter Tuning:
   - Grid Search und Random Search für die Optimierung der Hyperparameter (ToDo: noch besser implementieren)
 
