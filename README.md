@@ -2,32 +2,32 @@
 
 ## 1 Introduction
 
-### Motivation
+#### Motivation
 
 - Angebliche 72% Pünktlichkeit der ICEs
 - Gefühl immer die falschen ICEs zu erwischen
 - Gezielt Zugbindung aufheben (strategisch den falschen Zug buchen)
 - Verspätungen und Ausfälle der ICEs vorhersagen
 
-### Research question
+#### Research question
 
 - Lassen sich Verspätungen und Ausfälle der ICEs anhand von Daten über vergangene Zugfahrten und Wetterdaten vorhersagen?
 - Welche Faktoren beeinflussen die Pünktlichkeit der ICEs?
 - Wie kann die Vorhersagegenauigkeit weiter verbessert werden?
 
-### Goal
+#### Goal
 
 - Entwicklung eines Modells zur Vorhersage von Verspätungen und Ausfällen der ICEs
 - Entwicklung einer Web-App zur Visualisierung der Vorhersagen
 - Bereitstellung der Daten und Modelle für die Community
 
-### Target audience
+#### Target audience
 
 - Bahnreisende, die ihre Reise besser planen möchten
 - Entwickler, die an der Vorhersage von Verspätungen und Ausfällen interessiert sind
 - Forscher, die an der Analyse von Zugfahrten und Wetterdaten interessiert sind
 
-### How to use this repository
+#### How to use this repository
 
 - Clone the repository
 - Install the required packages via `pip install -r requirements.txt`
@@ -100,8 +100,8 @@ ML-4-B
 
 ## 2 Related Work
 
-- Vortrag von [David Kriesel](https://www.dkriesel.com/blog/2019/1229_video_und_folien_meines_36c3-vortrags_bahnmining)
-- Projekt von [Theo Döllmann](https://gitlab.com/bahnvorhersage/bahnvorhersage)
+- Vortrag von [David Kriesel](https://www.dkriesel.com/blog/2019/1229_video_und_folien_meines_36c3-vortrags_bahnmining) zu Datensammlung und -analyse bei der Deutschen Bahn
+- Projekt von [Theo Döllmann](https://gitlab.com/bahnvorhersage/bahnvorhersage) zur Vorhersage, ob man seinen Anschlusszug erreicht
   - [Bahnvorhersagen.de](https://bahnvorhersage.de/blog)
 
 ## 3 Methodology
@@ -144,17 +144,17 @@ ML-4-B
 
 ### 3.3 Data Understanding and Preparation
 
-- Bahn Data exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration/exploration.ipynb)
+#### Bahn Data exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration/exploration.ipynb)
   - Informationen jeder Station einer Zugfahrt mit Informationen über die Zugfahrt an dieser Station
   - `Station, Zugnummer, Verspätung, Zugtyp, Zielbahnhof, Abfahrtszeit, Ausfall, Ankunftszeit`
   - ca. 4 Mio. Einträge
   - 107 Fernverkehrsbahnhöfe in Deutschland
-- Wetter Data exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration/weather_exploration.ipynb)
+#### Wetter Data exploration über [Jupyter Notebook](https://github.com/TheTastyHanuta/ML-4-B/blob/main/src/exploration/weather_exploration.ipynb)
   - Stündliche Wetterdaten für Fernverkehrsbahnhöfe in Deutschland
   - `Zeitstempel, Wettertyp, Temperatur, Niederschlag, Windgeschwindigkeit, Luftfeuchtigkeit, Schneefall`
   - ca. 5.564 Einträge pro Bahnhof
   - Insgesamt 375.000 Zeilen
-- Data preparation:
+#### Data preparation:
   - Wetterdaten von JSON in DataFrame umwandeln
     - Wetterdaten in relevante Features umwandeln (Temperatur, Niederschlag, usw.)
   - Bahndaten transformieren, sodass jede Zeile eine Zugfahrt repräsentiert
@@ -187,19 +187,19 @@ ML-4-B
 
 ## 4 Results
 
-- Artifacts:
+#### Artifacts:
   - Jupyter Notebooks für die Datenexploration
   - Python-Skripte für die Datenverarbeitung und Modelltraining
   - Streamlit App zur Visualisierung der Vorhersagen
   - Trainierte Modelle für die Vorhersage von Verspätungen und Ausfällen
-- Libraries:
+#### Libraries:
   - XGBoost und LightGBM für die Modellierung
   - Pandas und NumPy für die Datenverarbeitung
-  - Streamlit für die Web-App
-- Konzept: 
+  - Streamlit für die Web-App 
+#### Konzept: 
   - Vorhersage von Verspätungen und Ausfällen von ICEs basierend auf historischen Zugfahrten und Wetterdaten
   - Angabe von Start- und Zielbahnhof, Zugnummer, Datum --> Vorhersage der Verspätung und Ausfallwahrscheinlichkeit
-- Ergebnisse:
+#### Ergebnisse:
   - Modelle können Ausfälle mit einer Genauigkeit von ca. 70% vorhersagen
   - Verspätungen können mit einer Genauigkeit von ca. 10 Minuten vorhergesagt werden (Still works in progress)
   - LightGBM genauer als XGBoost
@@ -207,30 +207,59 @@ ML-4-B
   - Modelle können weiter verbessert werden durch:
     - Bessere Datenqualität (mehr historische Daten)
     - Hyperparameter Tuning
-- Descriptive Language
-  - Die Modelle sind in der Lage, die Pünktlichkeit von ICEs zu prognostizieren, indem sie historische Zugfahrten und Wetterdaten analysieren.
-  - Die Genauigkeit der Vorhersagen variiert je nach Modell und Feature-Auswahl.
-  - Die Ergebnisse zeigen, dass Wetterbedingungen einen signifikanten Einfluss auf die Pünktlichkeit der Züge haben.
-  - Die entwickelten Modelle können als Grundlage für weitere Forschungen und Anwendungen dienen.
-  - Die Vorhersagen können Bahnreisenden helfen, ihre Reisen besser zu planen und mögliche Verspätungen zu vermeiden.
-  - Die Web-App ermöglicht es Nutzern, die Vorhersagen einfach und intuitiv abzurufen.
-  - Die bereitgestellten Daten und Modelle können von der Community genutzt und weiterentwickelt werden.
-  - Die Ergebnisse und Modelle sind nicht perfekt und können weiter verbessert werden, insbesondere durch die Integration weiterer Datenquellen und die Optimierung der Hyperparameter.
-  - Die Vorhersagen sind als Hilfestellung gedacht und sollten nicht als 100% zuverlässig angesehen werden.
-  - Die Modelle sind ein erster Schritt in Richtung einer besseren Planung von Bahnreisen und können in Zukunft weiter verfeinert werden.
-  - Die Ergebnisse zeigen, dass es möglich ist, Verspätungen und Ausfälle von ICEs vorherzusagen, jedoch sind die Modelle noch nicht perfekt und benötigen weitere Optimierung.
+#### Descriptive Language
+  - Die Modelle sind in der Lage, die Pünktlichkeit von ICEs zu prognostizieren, indem sie historische Zugfahrten und Wetterdaten analysieren
+  - Die Genauigkeit der Vorhersagen variiert je nach Modell und Feature-Auswahl
+  - Die Ergebnisse zeigen, dass Wetterbedingungen einen signifikanten Einfluss auf die Pünktlichkeit der Züge haben
+  - Die entwickelten Modelle können als Grundlage für weitere Forschungen und Anwendungen dienen
+  - Die Vorhersagen können Bahnreisenden helfen, ihre Reisen besser zu planen und mögliche Verspätungen zu vermeiden
+  - Die Web-App ermöglicht es Nutzern, die Vorhersagen einfach und intuitiv abzurufen
+  - Die bereitgestellten Daten und Modelle können von der Community genutzt und weiterentwickelt werden
+  - Die Ergebnisse und Modelle sind nicht perfekt und können weiter verbessert werden, insbesondere durch die Integration weiterer Datenquellen und die Optimierung der Hyperparameter
+  - Die Vorhersagen sind als Hilfestellung gedacht und sollten nicht als 100% zuverlässig angesehen werden
+  - Die Modelle sind ein erster Schritt in Richtung einer besseren Planung von Bahnreisen und können in Zukunft weiter verfeinert werden
+  - Die Ergebnisse zeigen, dass es möglich ist, Verspätungen und Ausfälle von ICEs vorherzusagen, jedoch sind die Modelle noch nicht perfekt und benötigen weitere Optimierung
 
 ## 5 Discussion
 
-- Now its time to discuss your results/ artifacts/ app
-- Show the limitations : e.g. missing data, limited training ressources/ GPU availability in Colab, limitaitons of the app
-- Discuss your work from an ethics perspective:
-- Dangers of the application of your work (for example discrimination through ML models)
-- Transparency
-- Effects on society and environment
-- Possible sources <https://algorithmwatch.org/en/> Have a look at the "Automating Society Report"; <https://ainowinstitute.org/> Have a look at this website and their publications
-- Further Research: What could be next steps for other researchers (specific research questions)
+#### Limitationen:
+  - Wetterdaten liegen nur für das letzte Jahr vor und sind nicht für alle Bahnhöfe verfügbar
+  - Bahndaten nur der letzten 5 Monate. Kann aber noch erweitert werden
+  - Trainingszeit wird mit zunehmender Datenmenge länger, hält sich aber in Grenzen
+  - Wetterdaten können nur 16 Tage im Voraus abgerufen werden, was die Vorhersagezeit einschränkt
+  - Andere Zugarten (z.B. S-Bahn, RB, RE) wurden nicht mit eingebunden, da diese generell weniger Verspätungen haben und die Datenmenge zu groß wäre
+##### Ethische Überlegungen:
+  - Datenschutz: Sicherstellen, dass keine personenbezogenen Daten verarbeitet werden
+  - Schaden von Dritten: Keine falschen Vorhersagen, die zu finanziellen Verlusten führen könnten
+  - Schaden an der Deutschen Bahn: Keine negativen Auswirkungen auf das Image der Deutschen Bahn
+#### Transparenz und Nachvollziehbarkeit:
+  - Offene Daten: Bereitstellung der Daten und Modelle für die Community
+  - Offene Quellen: Verwendung von Open-Source-Tools und -Bibliotheken
+  - Dokumentation: Ausführliche Dokumentation der Methodik und Ergebnisse
+  - Reproduzierbarkeit: Sicherstellen, dass die Ergebnisse reproduzierbar sind
+  - Nachvollziehbarkeit: Alle Schritte der Datenverarbeitung und Modellierung sind nachvollziehbar dokumentiert
+  - Offene Diskussion: Feedback und Verbesserungsvorschläge sind willkommen
+  - Verantwortung: Wir sind uns der Verantwortung bewusst, die mit der Entwicklung solcher Modelle einhergeht
+#### Einfluss auf die Gesellschaft und Umwelt:
+  - Die Vorhersage von Verspätungen und Ausfällen kann dazu beitragen, die Planung von Bahnreisen zu verbessern und die Zufriedenheit der Reisenden zu erhöhen, sodass mehr mit der Bahn gefahren wird
+  - Das Fahren mit der Bahn ist umweltfreundlicher als das Fahren mit dem Auto oder Flugzeug, was zu einer Reduzierung der CO2-Emissionen beiträgt
+  - Die Bahn kann durch die Vorhersagen und Analysen ihren Betrieb optimieren und so die Pünktlichkeit und Zuverlässigkeit erhöhen
+#### Future work:
+  - Weitere Datenquellen integrieren (z.B. Fahrplanänderungen)
+  - Hyperparameter Tuning weiter optimieren
+  - Integration von Echtzeitdaten für eine genauere Vorhersage
+  - Erweiterung der Web-App um weitere Funktionen (z.B. Benachrichtigungen bei Verspätungen)
+  - Erweiterung auf Anschlussverbindungen (aktuell nur direkte Verbindungen möglich)
+    - Prognose, wie wahrscheinlich man seinen Anschlusszug erreicht
+  - Eigene Datenbank für die Speicherung der Daten und Modelle
 
 ## 6 Conclusion
 
-- Short summary of your findings and outlook
+- Die Vorhersage von Verspätungen und Ausfällen von ICEs ist möglich, jedoch noch nicht perfekt
+- Die Modelle können weiter verbessert werden durch:
+  - Mehr Daten (historische Bahndaten und Wetterdaten)
+  - Hyperparameter Tuning
+  - Integration weiterer Datenquellen
+- Die entwickelten Modelle und die Web-App bieten eine gute Grundlage für weitere Forschungen und Anwendungen
+- Die Ergebnisse und Modelle sind offen für die Community und können weiterentwickelt werden
+- Die Vorhersagen können Bahnreisenden helfen, ihre Reisen besser zu planen und mögliche Verspätungen zu vermeiden
