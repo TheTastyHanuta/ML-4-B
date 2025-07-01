@@ -116,7 +116,7 @@ ML-4-B
 - [Data Understanding and Preparation](#33-data-understanding-and-preparation)
   - Explorative Datenanalyse (EDA) durchführen
   - Feature Engineering
-  - Datenbereinigung und Normalisierung
+  - Bahndaten transformieren, sodass jede Zeile eine direkte Verbindung ist
   - Daten zusammenführen:
     - Wetterdaten und Bahndaten zusammenführen
     - Relevante Features auswählen
