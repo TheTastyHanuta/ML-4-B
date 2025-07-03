@@ -5,33 +5,38 @@ icon = "🚄"
 
 [[pages]]
 name = "Data Analysis"
-icon = "🎅"
+icon = ""
 is_section = true
 
 [[pages]]
 path = "pages/visual.py"
 name = "Diagramme"
-icon = "❤"
+icon = ""
 
 [[pages]]
 path = "pages/stations.py"
-name = "Bahn-Stationen"
-icon = "🥴"
+name = "Verspätung nach Station"
+icon = ""
 
 [[pages]]
 path = "pages/direct_connections.py"
-name = "Direkte Verbindungen"
-icon = "😱"
+name = "Verbindungs-Historie"
+icon = ""
 
 [[pages]]
 name = "Machine Learning"
-icon = "🚆"
+icon = ""
 is_section = true
 
 [[pages]]
 path = "pages/predictor.py"
-name = "Verspätungsprognose"
-icon = "🤓"
+name = "Verspätungsprognose nach Zugnummer"
+icon = ""
+
+[[pages]]
+path = "pages/best-train.py"
+name = "Verspätungsprognose nach Strecke"
+icon = ""
 
 
 
