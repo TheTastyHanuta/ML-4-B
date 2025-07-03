@@ -61,6 +61,13 @@ if start and end and date:
         else:
             rows = []
             days_ahead = (date - dt_date.today()).days
+
+            if days_ahead < 0:
+                st.warning(
+                    "Das ausgewählte Datum liegt in der Vergangenheit. Bitte nutze für diese Anfrage die Verbindungs-Historie Seite."
+                )
+                st.stop()
+
             # Check if weather data can be used
             use_weather = weather and days_ahead <= 16
             weather_data = None
@@ -81,7 +88,6 @@ if start and end and date:
             st.write("Treffe Vorhersagen...")
             progress_bar = st.progress(0, text="Treffe Vorhersagen...")
             total = len(trains)
-
             # Iterate over trains and make predictions
             for train in trains:
                 progress_bar.progress(

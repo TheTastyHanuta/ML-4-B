@@ -62,7 +62,7 @@ if selected_train and date:
 
     if days_ahead < 0:
         st.warning(
-            "Das ausgewählte Datum liegt in der Vergangenheit. Für diese Anfrage wechseln Sie bitte auf den Tab Verbindungs-Historie"
+            "Das ausgewählte Datum liegt in der Vergangenheit. Bitte nutze für diese Anfrage die Verbindungs-Historie Seite."
         )
         st.stop()
 
