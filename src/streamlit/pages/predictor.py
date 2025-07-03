@@ -48,14 +48,11 @@ date_col, filter_col = st.columns([2, 1])
 with date_col:
     date = st.date_input("Datum", value=None)
 
-# st.divider()
-
 # --- Filter Options ---
 
 with filter_col:
     st.markdown("**Filter**")
     weather = st.checkbox("Wetterdaten einbeziehen", value=True)
-
 
 # --- Display Prediction ---
 if selected_train and date:
@@ -69,6 +66,7 @@ if selected_train and date:
         )
         st.stop()
 
+    # --- Check Weather Data Availability ---
     use_weather = weather
     weather_data = None
     if weather and days_ahead > 16:
@@ -83,19 +81,18 @@ if selected_train and date:
                 "Keine Wetterdaten für diese Station und dieses Datum gefunden. Die Vorhersage erfolgt ohne Wetterdaten."
             )
             use_weather = False
+
+    # --- Get Typical Departure Time ---
     time = get_typical_departure_time(start, end, selected_train, date)
     if time is None:
         st.warning(
             "Fehler bei der Abfahrtszeitbestimmung. Bitte überprüfen Sie die Eingaben oder wähle einen anderen Zug. Wenn das Problem weiterhin besteht, bitte ein Issue auf GitHub erstellen."
         )
     else:
+        # --- Make Predictions ---
         prediction = predict_delay(
             start, end, selected_train, date, time, use_weather, weather_data
         )
-        st.divider()
-        st.markdown(f"### Prognosen für {start} → {end} am {date.strftime('%d.%m.%Y')}")
-        st.success(f"Prognostizierte Verspätung: {prediction:.1f} Minuten")
-        # st.divider()
         canceled_prob = predict_canceled(
             start,
             end,
@@ -106,7 +103,9 @@ if selected_train and date:
             use_weather,
             weather_data,
         )
-
+        st.divider()
+        st.markdown(f"### Prognosen für {start} → {end} am {date.strftime('%d.%m.%Y')}")
+        st.success(f"Prognostizierte Verspätung: {prediction:.1f} Minuten")
         st.info(f"Prognostizierte Ausfallwahrscheinlichkeit: {canceled_prob:.2%}")
         st.divider()
 
