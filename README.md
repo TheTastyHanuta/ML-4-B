@@ -35,7 +35,7 @@
 - Run the Python scripts in the `src/ml_models` folder to train the models
 - Run the Streamlit app in the `src/streamlit` folder to visualize the predictions
 - Use the `data` folder to store your own data or keep ours
-- Adjust the timestamp in the `scraping.js` file to collect new weather data (don't forget to add your API key)
+- Run the `src/weatherdata/data_scraping/scraping.js` file to collect new weather data (don't forget to add your API key and run npm install)
 - Run the `src/init.py` file to transform the bahn/weather data and train all models
 
 ### How is this document structured
