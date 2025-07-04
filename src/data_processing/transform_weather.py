@@ -1,8 +1,11 @@
 import json
+from pathlib import Path
 import pandas as pd
 from datetime import datetime
+from pandas import DataFrame
 
-def transform_weather(path: str = "../weatherdata/data_scraping/scrapedData/scrapedData.json") -> pd.DataFrame:
+
+def transform_weather(path: Path) -> DataFrame | None:
     """
     Transform weather data from a given path into a DataFrame.
     This function processes weather data, extracting relevant fields and converting them into a structured DataFrame format.
@@ -19,6 +22,11 @@ def transform_weather(path: str = "../weatherdata/data_scraping/scrapedData/scra
              - rain_amount: Rain amount in mm (if available)
              - snow_amount: Snow amount in mm (if available)
     """
+
+    print(f"Processing Weather data from path: {path}")
+    if not path.exists():
+        print(f"Path {path} does not exist. Please check the path and try again.")
+        return None
 
     # Load the JSON data as a nested dict
     with open(path, "r", encoding="utf-8") as file: # For real i hate windows. Why is it not using utf-8 by default?

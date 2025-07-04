@@ -4,6 +4,8 @@ from src.data_processing.transform_bahn import transform_bahn
 from src.data_processing.transform_weather import transform_weather
 from src.data_processing.map_weather import map_weather
 
+base_dir = Path(__file__).resolve().parent.parent.parent
+
 def transform_and_save(bahn: bool = True, weather: bool = True) -> None:
     """
     Transform and save bahn and weather data to parquet files.
@@ -16,23 +18,32 @@ def transform_and_save(bahn: bool = True, weather: bool = True) -> None:
     :param weather: Whether to process weather data.
     :return: None
     """
+
+    print(f"Base directory for data processing: {base_dir}")
+
     if bahn:
         print("Starting bahn data transformation...")
         # Call the transform_data function to process the data
-        transformed_bahn = transform_bahn(path="../../data/bahn_data")
+        transformed_bahn = transform_bahn(path=base_dir / "data/bahn_data")
+        if transformed_bahn is None:
+            print("No bahn data to process. Exiting...")
+            return
         # Save the transformed bahn data to a parquet file
-        bahn_output_path = Path("../../data/bahn_data/processed/subtrips_data.parquet")
+        bahn_output_path = Path(base_dir / "data/bahn_data/processed/subtrips_data.parquet")
         print("Saving bahn data DataFrame as Parquet...")
-        transformed_bahn.to_parquet(bahn_output_path, index=False, engine="pyarrow")
+        #transformed_bahn.to_parquet(bahn_output_path, index=False, engine="pyarrow")
 
     if weather:
         print("Starting weather data transformation...")
         # Call the transform_weather function to process the weather data
-        transformed_weather = transform_weather(path="weatherdata/data_scraping/scrapedData/scrapedData.json")
+        transformed_weather = transform_weather(path=base_dir / "src/weatherdata/data_scraping/scrapedData/scrapedData.json")
+        if transformed_weather is None:
+            print("No weather data to process. Exiting...")
+            return
         # Save the transformed weather data to a parquet file
-        weather_output_path = Path("../../data/weather_data/weather_data.parquet")
+        weather_output_path = Path(base_dir / "data/weather_data/weather_data.parquet")
         print("Saving weather data DataFrame as Parquet...")
-        transformed_weather.to_parquet(weather_output_path, index=False, engine="pyarrow")
+        #transformed_weather.to_parquet(weather_output_path, index=False, engine="pyarrow")
 
 def map_weather_and_save() -> None:
     """
@@ -43,10 +54,17 @@ def map_weather_and_save() -> None:
     :return: None
     """
     # Load the transformed data
-    transformed_bahn_data = pd.read_parquet(Path("../../data/bahn_data/processed/subtrips_data.parquet"), engine="pyarrow")
+    transformed_bahn_data = pd.read_parquet(Path(base_dir / "data/bahn_data/processed/subtrips_data.parquet"), engine="pyarrow")
 
     # Load the weather data
-    weather_data = pd.read_parquet(Path("../../data/weather_data/weather_data.parquet"), engine="pyarrow")
+    weather_data = pd.read_parquet(Path(base_dir / "data/weather_data/weather_data.parquet"), engine="pyarrow")
+
+    if transformed_bahn_data.empty:
+        print("Transformed bahn data is empty. Exiting...")
+        return
+    if weather_data.empty:
+        print("Weather data is empty. Exiting...")
+        return
 
     # Map the weather data to the transformed data
     print("Mapping weather data to sub-trips...")
@@ -59,12 +77,12 @@ def map_weather_and_save() -> None:
     print(merged_data.head())
 
     # Save the merged data to a new parquet file
-    output_path = Path("../../data/subtrips_with_weather.parquet")
+    output_path = Path(base_dir / "data/subtrips_with_weather.parquet")
     print("Saving merged data DataFrame as Parquet...")
     merged_data.to_parquet(output_path, index=False, engine="pyarrow")
 
 if __name__ == "__main__":
     print("Starting data processing...")
-    transform_and_save(True, False)
+    transform_and_save(True, True)
     map_weather_and_save()
     print("Data processing completed. Data has been saved.")

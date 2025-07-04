@@ -2,7 +2,7 @@ import pandas as pd
 import itertools
 from pathlib import Path
 
-def transform_bahn(path: str = "../../data/bahn_data") -> pd.DataFrame:
+def transform_bahn(path: Path) -> pd.DataFrame | None:
     """
     Transform the Bahn data to extract sub-trips from the train rides.
     This function processes the Bahn data, extracts sub-trips, and returns a DataFrame with the following columns:
@@ -20,7 +20,12 @@ def transform_bahn(path: str = "../../data/bahn_data") -> pd.DataFrame:
     :type path: str
     :return: DataFrame containing the transformed sub-trip data.
     """
-    # Load dataset
+
+    print(f"Processing Bahn data from path: {path}")
+    if not path.exists():
+        print(f"Path {path} does not exist. Please check the path and try again.")
+        return None
+
     df = pd.concat(
         [pd.read_parquet(f, engine="pyarrow") for f in sorted(Path(path).glob("*.parquet"))],
         ignore_index=True)

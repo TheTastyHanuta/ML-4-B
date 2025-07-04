@@ -48,6 +48,6 @@ def map_weather(bahn: pd.DataFrame, weather: pd.DataFrame) -> pd.DataFrame:
     missing_weather = merged['temp_celsius'].isna().sum()
     print(f"Subtrips ohne passenden Wetter-Eintrag: {missing_weather}")
 
-    # Maybe i can make it work so that the weather data is also available for the destination station
+    # ToDo: Maybe i can make it work so that the weather data is also available for the destination station
 
     return merged

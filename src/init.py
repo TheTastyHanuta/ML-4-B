@@ -17,7 +17,7 @@ def main():
     # Uncomment the following lines to enable data transformation and saving
 
     #print("Starting data processing...")
-    #transform_and_save(bahn=True, weather=False)
+    #transform_and_save(bahn=True, weather=True)
     #map_weather_and_save()
     #print("Data processing completed. Data has been saved.")
 
