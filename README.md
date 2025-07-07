@@ -230,7 +230,7 @@ ML-4-B
   - Trainingszeit wird mit zunehmender Datenmenge länger, hält sich aber in Grenzen
   - Wetterdaten können nur 16 Tage im Voraus abgerufen werden, was die Vorhersagezeit einschränkt
   - Andere Zugarten (z.B. S-Bahn, RB, RE) wurden nicht mit eingebunden, da diese generell weniger Verspätungen haben und die Datenmenge zu groß wäre
-##### Ethische Überlegungen:
+#### Ethische Überlegungen:
   - Datenschutz: Sicherstellen, dass keine personenbezogenen Daten verarbeitet werden
   - Schaden von Dritten: Keine falschen Vorhersagen, die zu finanziellen Verlusten führen könnten
   - Schaden an der Deutschen Bahn: Keine negativen Auswirkungen auf das Image der Deutschen Bahn
