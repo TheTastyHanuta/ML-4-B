@@ -50,6 +50,7 @@
 - [4 Results](#4-results)
 - [5 Discussion](#5-discussion)
 - [6 Conclusion](#6-conclusion)
+- [7 Streamlit App](#7-streamlit-app)
 
 ### Project tree
 
@@ -196,7 +197,7 @@ ML-4-B
 #### Libraries:
   - XGBoost und LightGBM für die Modellierung
   - Pandas und NumPy für die Datenverarbeitung
-  - Streamlit für die Web-App 
+  - Streamlit für die Web-App
 #### Konzept: 
   - Vorhersage von Verspätungen und Ausfällen von ICEs basierend auf historischen Zugfahrten und Wetterdaten
   - Angabe von Start- und Zielbahnhof, Zugnummer, Datum --> Vorhersage der Verspätung und Ausfallwahrscheinlichkeit
@@ -264,3 +265,39 @@ ML-4-B
 - Die entwickelten Modelle und die Web-App bieten eine gute Grundlage für weitere Forschungen und Anwendungen
 - Die Ergebnisse und Modelle sind offen für die Community und können weiterentwickelt werden
 - Die Vorhersagen können Bahnreisenden helfen, ihre Reisen besser zu planen und mögliche Verspätungen zu vermeiden
+
+## 7 Streamlit App
+Die App kann unter folgendem Link geöffnet werden: [https://best-website.streamlit.app/](https://best-website.streamlit.app/)
+### Funktionen der App
+Die App besteht aus mehreren Seiten, die jeweils unterschiedliche Analyse- und Prognosefunktionen bieten:
+#### Dashboard
+Die Startseite der App – gibt einen Überblick über das Projekt sowie erste Einblicke in Statistiken zu Zugverspätungen und -ausfällen.
+#### Diagramme
+Visualisierungen zu:
+- Pünktlichkeit  
+- Verspätungen  
+- Zugausfällen 
+#### Verspätung nach Station
+Tabellarische Übersicht über:
+- Durchschnittliche Verspätung pro Bahnhof  
+- Ausfallquoten
+- Stichprobengröße
+
+Mit Filterfunktion: Wähle z. B. nur ICE, IC oder RB, um gezielt zu analysieren.
+#### Verbindungs-Historie
+Suche nach konkreten Zugverbindungen und sieh dir an, wie pünktlich diese in der Vergangenheit waren.
+#### Verspätungsprognse nach Zugnummer  
+Wähle:
+- Start- und Zielbahnhof  
+- Datum  
+- Konkrete ICE-Zugnummer
+- Optional: Wetterdaten berücksichtigen
+  
+Die App erstellt eine Prognose zur voraussichtlichen Verspätung und Ausfallwahrscheinlichkeit des gewählten Zugs.
+#### Verspätungsprognose nach Strecke
+Wähle:
+- Start- und Zielbahnhof
+- Datum
+- Optional: Wetterdaten berücksichtigen
+  
+Die App zeigt dir **alle ICE-Verbindungen** auf dieser Strecke mit Prognosen zur Pünktlichkeit und Ausfallwahrscheinlichkeit.   
