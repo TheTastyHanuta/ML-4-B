@@ -4,7 +4,7 @@
 
 #### Motivation
 
-- Angebliche 72% Pünktlichkeit der ICEs
+- Angebliche 64% Pünktlichkeit der ICEs
 - Gefühl immer die falschen ICEs zu erwischen
 - Gezielt Zugbindung aufheben (strategisch den falschen Zug buchen)
 - Verspätungen und Ausfälle der ICEs vorhersagen
