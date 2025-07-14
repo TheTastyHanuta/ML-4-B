@@ -73,7 +73,7 @@ def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
             'verbosity': -1,
         }
 
-    max_rounds = 5000
+    max_rounds = 20000
 
     # Train model with early stopping via callbacks
     print("Training LightGBM model...")
@@ -94,7 +94,7 @@ def train_lightgbm(subset: int | str = 'all', target: str = 'delay_minutes'):
 
     if target == 'delay_minutes':
         # Cross validation for RMSE
-        cross_val_rmse(X_train, y_train, params, CAT_FEATURES)
+        #cross_val_rmse(X_train, y_train, params, CAT_FEATURES)
         mse = mean_squared_error(y_test, y_pred)
         rmse = np.sqrt(mse)
         mae = mean_absolute_error(y_test, y_pred)
@@ -165,5 +165,5 @@ def cross_val_rmse(X, y, params, cat_features, n_splits=5):
 
 if __name__ == "__main__":
     print("Starting LightGBM model training...")
-    train_lightgbm(target="canceled")
+    train_lightgbm(target="delay_minutes")
     print("Training complete.")
