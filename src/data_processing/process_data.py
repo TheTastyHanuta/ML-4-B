@@ -31,7 +31,7 @@ def transform_and_save(bahn: bool = True, weather: bool = True) -> None:
         # Save the transformed bahn data to a parquet file
         bahn_output_path = Path(base_dir / "data/bahn_data/processed/subtrips_data.parquet")
         print("Saving bahn data DataFrame as Parquet...")
-        #transformed_bahn.to_parquet(bahn_output_path, index=False, engine="pyarrow")
+        transformed_bahn.to_parquet(bahn_output_path, index=False, engine="pyarrow")
 
     if weather:
         print("Starting weather data transformation...")
@@ -43,7 +43,7 @@ def transform_and_save(bahn: bool = True, weather: bool = True) -> None:
         # Save the transformed weather data to a parquet file
         weather_output_path = Path(base_dir / "data/weather_data/weather_data.parquet")
         print("Saving weather data DataFrame as Parquet...")
-        #transformed_weather.to_parquet(weather_output_path, index=False, engine="pyarrow")
+        transformed_weather.to_parquet(weather_output_path, index=False, engine="pyarrow")
 
 def map_weather_and_save() -> None:
     """
@@ -83,6 +83,6 @@ def map_weather_and_save() -> None:
 
 if __name__ == "__main__":
     print("Starting data processing...")
-    transform_and_save(True, True)
+    #transform_and_save(True, True)
     map_weather_and_save()
     print("Data processing completed. Data has been saved.")
