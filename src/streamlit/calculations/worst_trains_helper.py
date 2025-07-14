@@ -5,7 +5,11 @@ import pandas as pd
 import streamlit as st
 from pathlib import Path
 import json
-from .direct_helper import load_overview, FERN_PREFIXES, NAH_PREFIXES
+from .direct_helper import load_overview
+
+# Define train type prefixes specifically for worst trains analysis
+WORST_TRAINS_FERN_PREFIXES = ["ICE", "IC"]  # Only high-speed and intercity trains
+WORST_TRAINS_NAH_PREFIXES = ["S", "RE", "RB"]  # Regional trains
 
 # Define the path to the data directory
 base_dir = Path(__file__).parent.parent.parent.parent
@@ -41,13 +45,13 @@ def load_all_trains():
     return pd.DataFrame(all_trains)
 
 def get_train_type(train_name):
-    """Determines train type based on train name"""
-    if any(train_name.startswith(prefix) for prefix in FERN_PREFIXES):
-        return "Fernverkehr"
-    elif any(train_name.startswith(prefix) for prefix in NAH_PREFIXES):
-        return "Nahverkehr"
+    """Determines train type based on train name (specific for worst trains analysis)"""
+    if any(train_name.startswith(prefix) for prefix in WORST_TRAINS_FERN_PREFIXES):
+        return "Fernverkehr"  # Only ICE, IC
+    elif any(train_name.startswith(prefix) for prefix in WORST_TRAINS_NAH_PREFIXES):
+        return "Nahverkehr"   # S, RE, RB
     else:
-        return "Sonstige"
+        return "Sonstige"     # FLX, NJ, EC, HEX, ES and others
 
 def filter_trains(df_all, selected_train_types, min_samples, train_search=None):
     """
