@@ -16,7 +16,7 @@ path = Path(__file__).parent.parent.parent.parent / "data/streamlit_data"
 
 @st.cache_data
 def get_overview(path=path / "direct_train_overview.json"):
-    return load_overview(path)
+    return load_overview(path) # type: ignore
 
 
 overview = get_overview()

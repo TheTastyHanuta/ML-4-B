@@ -3,18 +3,49 @@ from pathlib import Path
 import pandas as pd
 from datetime import datetime
 import streamlit as st
-from src.ml_models.predict import CAT_FEATURES, ALL_FEATURES, ALL_FEATURES_NO_WEATHER, canceled_model_with_weather, \
-    canceled_model_without_weather, model_with_weather, model_without_weather
 import requests
+import pickle
+
+# Import feature definitions only
+from src.ml_models.predict import CAT_FEATURES, ALL_FEATURES, ALL_FEATURES_NO_WEATHER
 
 base_dir = Path(__file__).parent.parent.parent.parent
 data_dir = base_dir / "data" / "streamlit_data"
 
+# Cache models to prevent reloading on every prediction
+@st.cache_resource
+def load_delay_models():
+    """Load delay prediction models with caching"""
+    model_dir = base_dir / "models"
+    
+    with open(model_dir / "lightgbm_model_delay_minutes.pkl", 'rb') as f:
+        model_with_weather = pickle.load(f)
+    
+    with open(model_dir / "lightgbm_model_without_delay_minutes.pkl", 'rb') as f:
+        model_without_weather = pickle.load(f)
+    
+    return model_with_weather, model_without_weather
+
+@st.cache_resource
+def load_cancellation_models():
+    """Load cancellation prediction models with caching"""
+    model_dir = base_dir / "models"
+    
+    with open(model_dir / "lightgbm_model_canceled.pkl", 'rb') as f:
+        canceled_model_with_weather = pickle.load(f)
+    
+    with open(model_dir / "lightgbm_model_without_canceled.pkl", 'rb') as f:
+        canceled_model_without_weather = pickle.load(f)
+    
+    return canceled_model_with_weather, canceled_model_without_weather
+
 # Load all direct routes from JSON file
-def load_overview(json_path: str = data_dir / "direct_train_overview") -> dict:
+@st.cache_data
+def load_overview(json_path: str = str(data_dir / "direct_train_overview.json")) -> dict:
     with open(json_path, encoding="utf-8") as f:
         return json.load(f)
 
+@st.cache_data
 def get_trains_for_route(start: str, end: str) -> list:
     """Return a list of IC/ICE train names for the given start and end station."""
     import os
@@ -39,7 +70,9 @@ def predict_delay(start, end, train_name, date, time, weather, weather_data=None
     :param weather_data: dict with weather data (optional)
     :return: float (delay in minutes)
     """
-
+    # Load models from cache
+    model_with_weather, model_without_weather = load_delay_models()
+    
     dt = datetime.combine(date, time)
     features = {
         'start_station': start,
@@ -84,7 +117,9 @@ def predict_canceled(start, end, train_name, date, time, delay_minutes, weather,
     :param weather_data: dict with weather data (optional)
     :return: float (cancellation probability)
     """
-
+    # Load models from cache
+    canceled_model_with_weather, canceled_model_without_weather = load_cancellation_models()
+    
     dt = datetime.combine(date, time)
     features = {
         'start_station': start,
@@ -117,6 +152,7 @@ def predict_canceled(start, end, train_name, date, time, delay_minutes, weather,
         prediction = canceled_model_without_weather.predict(df[ALL_FEATURES_NO_WEATHER + ['delay_minutes']])[0]
     return prediction
 
+@st.cache_data
 def get_last_trips(start, end, train_name, date, time, n=5):
     """
     Returns the n trips closest in time to date+time for the selected connection.
@@ -145,6 +181,7 @@ def get_last_trips(start, end, train_name, date, time, n=5):
     filtered = filtered.sort_values('abs_time_diff').head(n)
     return filtered[['departure_time_origin', 'delay_at_dest', 'canceled']]
 
+@st.cache_data
 def get_typical_departure_time(start, end, train_name, date):
     """
     Returns the most common departure time (as datetime.time) for the given train, route, and weekday.
@@ -172,6 +209,7 @@ def get_typical_departure_time(start, end, train_name, date):
         return pd.to_datetime(most_common_time.iloc[0], format='%H:%M').time()
     return None
 
+@st.cache_data(ttl=1000)  # Cache for 1000 seconds since weather data changes
 def get_weather_forecast_for_station_date(station_name, date):
     """
     Fetches weather forecast for a given station and date using OpenWeatherMap API.
