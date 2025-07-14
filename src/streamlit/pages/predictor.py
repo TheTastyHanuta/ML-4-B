@@ -35,11 +35,13 @@ with col2:
     )
 with col3:
     trains = get_trains_for_route(start, end)
-    selected_train = (
-        st.selectbox("Zug", trains)
-        if trains
-        else st.warning("Keine Direktverbindung gefunden.")
-    )
+    if trains:
+        selected_train = (
+            st.selectbox("Zug", trains)
+        )
+    else:
+        st.warning("Keine Direktverbindung gefunden.")
+        st.stop()
 
 st.divider()
 
