@@ -1,3 +1,5 @@
+from typing import Optional
+
 import json
 from pathlib import Path
 import pandas as pd
@@ -9,7 +11,9 @@ base_dir = Path(__file__).parent.parent.parent.parent
 data_dir = base_dir / "data" / "streamlit_data"
 
 # Load all direct routes from JSON file
-def load_overview(json_path: str = data_dir / "direct_train_overview") -> dict:
+def load_overview(json_path: Optional[str] = None) -> dict:
+    if json_path is None:
+        json_path = str(data_dir / "direct_train_overview.json")
     with open(json_path, encoding="utf-8") as f:
         return json.load(f)
 
@@ -18,10 +22,10 @@ def load_route_df(
     start: str,
     end: str,
     overview: dict,
-    data_dir: str = data_dir / "direct_trains"
+    data_dir_path = None
 ) -> pd.DataFrame:
     filename = overview[start][end]
-    path = Path(data_dir) / filename
+    path = Path(data_dir) / "direct_trains" / filename
     return pd.read_json(path, orient="records")
 
 # Filter routes based on train type and sample size

@@ -24,6 +24,11 @@ name = "Verbindungs-Historie"
 icon = ""
 
 [[pages]]
+path = "pages/worst_trains.py"
+name = "Hall of shame"
+icon = ""
+
+[[pages]]
 name = "Machine Learning"
 icon = ""
 is_section = true
