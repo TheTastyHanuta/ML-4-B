@@ -152,7 +152,24 @@ def predict_canceled(start, end, train_name, date, time, delay_minutes, weather,
         prediction = canceled_model_without_weather.predict(df[ALL_FEATURES_NO_WEATHER + ['delay_minutes']])[0]
     return prediction
 
+# Cache the expensive parquet loading separately  
 @st.cache_data
+def load_subtrips_data():
+    """Load subtrips data with caching - this only depends on the file"""
+    subtrips_path = base_dir / "data/bahn_data/processed/subtrips_data.parquet"
+    if not subtrips_path.exists():
+        return None
+    return pd.read_parquet(subtrips_path)
+
+# Cache the lightweight typical departure times
+@st.cache_data
+def load_typical_departure_times():
+    """Load pre-computed typical departure times with caching"""
+    typical_times_path = data_dir / "typical_departure_times.parquet"
+    if not typical_times_path.exists():
+        return None
+    return pd.read_parquet(typical_times_path)
+
 def get_last_trips(start, end, train_name, date, time, n=5):
     """
     Returns the n trips closest in time to date+time for the selected connection.
@@ -164,12 +181,11 @@ def get_last_trips(start, end, train_name, date, time, n=5):
     :param n: Number of trips
     :return: DataFrame with the n next trips
     """
-    import pandas as pd
     from datetime import datetime
-    subtrips_path = base_dir / "data/bahn_data/processed/subtrips_data.parquet"
-    if not subtrips_path.exists():
+    df = load_subtrips_data()  # This is cached!
+    if df is None:
         return None
-    df = pd.read_parquet(subtrips_path)
+    
     filtered = df[(df['origin_station'] == start) & (df['destination_station'] == end) & (df['train_name'] == train_name)]
     if filtered.empty:
         return None
@@ -181,7 +197,6 @@ def get_last_trips(start, end, train_name, date, time, n=5):
     filtered = filtered.sort_values('abs_time_diff').head(n)
     return filtered[['departure_time_origin', 'delay_at_dest', 'canceled']]
 
-@st.cache_data
 def get_typical_departure_time(start, end, train_name, date):
     """
     Returns the most common departure time (as datetime.time) for the given train, route, and weekday.
@@ -192,24 +207,32 @@ def get_typical_departure_time(start, end, train_name, date):
     :param date: datetime.date
     :return: datetime.time or None
     """
-    subtrips_path = base_dir / "data/bahn_data/processed/subtrips_data.parquet"
-    if not subtrips_path.exists():
+    typical_times = load_typical_departure_times()  # Load pre-computed data!
+    if typical_times is None:
         return None
-    df = pd.read_parquet(subtrips_path)
-    filtered = df[(df['origin_station'] == start) & (df['destination_station'] == end) & (df['train_name'] == train_name)]
-    if filtered.empty:
+    
+    # Fast lookup in the pre-computed data
+    result = typical_times[
+        (typical_times['origin_station'] == start) & 
+        (typical_times['destination_station'] == end) & 
+        (typical_times['train_name'] == train_name) &
+        (typical_times['weekday'] == date.weekday())
+    ]
+    
+    if result.empty:
         return None
-    filtered['departure_time_origin'] = pd.to_datetime(filtered['departure_time_origin'])
-    filtered = filtered[filtered['departure_time_origin'].dt.weekday == date.weekday()]
-    if filtered.empty:
-        return None
-    filtered['dep_time_str'] = filtered['departure_time_origin'].dt.strftime('%H:%M')
-    most_common_time = filtered['dep_time_str'].mode()
-    if not most_common_time.empty:
-        return pd.to_datetime(most_common_time.iloc[0], format='%H:%M').time()
-    return None
+    
+    return pd.to_datetime(result['dep_time_str'].iloc[0], format='%H:%M').time()
 
-@st.cache_data(ttl=1000)  # Cache for 1000 seconds since weather data changes
+# Cache station IDs loading
+@st.cache_data
+def load_station_ids():
+    """Load station IDs mapping with caching"""
+    station_ids_path = base_dir / "data/streamlit_data/station_ids.json"
+    with open(station_ids_path, encoding="utf-8") as f:
+        return json.load(f)
+
+@st.cache_data(ttl=3600)  # Cache for 1 hour since weather data changes
 def get_weather_forecast_for_station_date(station_name, date):
     """
     Fetches weather forecast for a given station and date using OpenWeatherMap API.
@@ -220,9 +243,7 @@ def get_weather_forecast_for_station_date(station_name, date):
     # Load API key from streamlit secrets
     api_key = st.secrets.weather_api_key
 
-    station_ids_path = base_dir / "data/streamlit_data/station_ids.json"
-    with open(station_ids_path, encoding="utf-8") as f:
-        station_ids = json.load(f)
+    station_ids = load_station_ids()  # This is cached!
     city_id = station_ids.get(station_name)
     if not city_id:
         return None

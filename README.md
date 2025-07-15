@@ -32,11 +32,18 @@
 - Clone the repository
 - Install the required packages via `pip install -r requirements.txt`
 - Run the Jupyter notebooks in the `src/exploration` folder to explore the data
-- Run the Python scripts in the `src/ml_models` folder to train the models
-- Run the Streamlit app in the `src/streamlit` folder to visualize the predictions
 - Use the `data` folder to store your own data or keep ours
 - Run the `src/weatherdata/data_scraping/scraping.js` file to collect new weather data (don't forget to add your API key and run npm install)
 - Run the `src/init.py` file to transform the bahn/weather data and train all models
+- Run following scripts to update streamlit data:
+  - Run the `src/streamlit/calculations/overview.py` to create a overview of the most important statistics
+  - Run the `src/streamlit/calculations/direct_trains.py` to create a list of direct trains with their typical delays and cancellations
+  - Run the `src/streamlit/calculations/worst_stations.py` to create a list of the worst stations regarding delays and cancellations
+  - Run the `src/streamlit/calculations/delay_dist.py` to create plots with distribution of delays and cancellations
+  - Run the `src/streamlit/calculations/calc_worst_trains.py` to create a list of the worst trains regarding delays and cancellations
+  - Run the `src/streamlit/scripts/create_typical_departure_times.py` script to create a lightweight parquet file with typical departure times for each train/route/weekday combination used for the prediction models
+- Start the Streamlit app with `streamlit run src/streamlit/main.py`. Dont forget to set the streamlit secret `weather_api_key` with your OpenWeather API key
+
 
 ### How is this document structured
 
