@@ -58,6 +58,8 @@ if start and end and date:
 
         if not trains:
             st.warning("Keine Direktverbindungen gefunden.")
+            status.update(label="Keine Direktverbindungen gefunden.", state="error", expanded=False)
+            st.stop()
         else:
             rows = []
             days_ahead = (date - dt_date.today()).days
@@ -66,6 +68,7 @@ if start and end and date:
                 st.warning(
                     "Das ausgewählte Datum liegt in der Vergangenheit. Bitte nutze für diese Anfrage die Verbindungs-Historie Seite."
                 )
+                status.update(label="Datum liegt in der Vergangenheit.", state="error", expanded=False)
                 st.stop()
 
             # Check if weather data can be used

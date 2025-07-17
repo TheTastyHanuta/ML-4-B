@@ -90,6 +90,7 @@ if selected_train and date:
         st.warning(
             "Fehler bei der Abfahrtszeitbestimmung. Bitte überprüfen Sie die Eingaben oder wähle einen anderen Zug. Wenn das Problem weiterhin besteht, bitte ein Issue auf GitHub erstellen."
         )
+        st.stop()
     else:
         # --- Make Predictions ---
         prediction = predict_delay(
