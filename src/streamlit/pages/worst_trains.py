@@ -124,8 +124,9 @@ else:
     st.warning("Keine Züge entsprechen den aktuellen Filterkriterien.")
 
 # Footer
-st.markdown("""
+st.markdown(
+    """
 ---
-**Datenbasis:** Deutsche Bahn, gesammelt vom 2025-01-01 bis 2025-05-31.  
-**Hinweis:** Die Daten zeigen alle verfügbaren Direktverbindungen zwischen den Bahnhöfen im Datensatz.
-""")
+Datenbasis: Deutsche Bahn, gesammelt vom 2024-08-01 bis 2025-06-30. Modelle vom 16.07.2025.
+"""
+)

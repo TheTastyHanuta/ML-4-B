@@ -126,3 +126,10 @@ if start and end and date:
         st.dataframe(df, use_container_width=True)
     else:
         st.info("Keine gültigen Fahrtdaten vorhanden für diese Auswahl.")
+
+st.markdown(
+    """
+---
+Datenbasis: Deutsche Bahn, gesammelt vom 2024-08-01 bis 2025-06-30. Modelle vom 16.07.2025.
+"""
+)

@@ -46,7 +46,9 @@ else:
 st.dataframe(df, use_container_width=True)
 
 # --- Footer ---
-st.markdown("""
+st.markdown(
+    """
 ---
-Datenbasis: Deutsche Bahn, gesammelt vom 2025-01-01 bis 2025-05-31.
-""")
+Datenbasis: Deutsche Bahn, gesammelt vom 2024-08-01 bis 2025-06-30.
+"""
+)

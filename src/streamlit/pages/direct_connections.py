@@ -8,7 +8,7 @@ path = Path(__file__).parent.parent.parent.parent / "data/streamlit_data"
 # --- Load data ---
 @st.cache_data
 def get_overview(path=path / "direct_train_overview.json"):
-    return load_overview(path)
+    return load_overview(str(path))
 
 overview = get_overview()
 
@@ -43,7 +43,9 @@ if start and end:
     )
 
 # --- Footer ---
-st.markdown("""
+st.markdown(
+    """
 ---
-Datenbasis: Deutsche Bahn, gesammelt vom 2025-01-01 bis 2025-05-31.
-""")
+Datenbasis: Deutsche Bahn, gesammelt vom 2024-08-01 bis 2025-06-30.
+"""
+)
