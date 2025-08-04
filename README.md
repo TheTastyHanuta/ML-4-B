@@ -1,5 +1,9 @@
 # ML-4-B
 
+Dies ist ein Projekt, das im Rahmen des Kurses "Machine Learning for Business" an der Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU) entstanden ist. 
+Ziel des Projekts ist es, die Pünktlichkeit von ICE-Zügen in Deutschland vorherzusagen und eine Web-App zur Visualisierung der Vorhersagen zu entwickeln.
+
+Alles Folgende ist eine Dokumentation des Projekts anhand der gegebenen Vorlage.
 ## 1 Introduction
 
 #### Motivation
@@ -71,35 +75,14 @@ ML-4-B
 ├── models
 ├── src
 │   ├── data_processing
-│   │   ├── transform_bahn.py
-│   │   ├── transform_weather.py
-│   │   ├── map_weather.py
-│   │   └── process_data.py
 │   ├── exploration
-│   │   ├── exploration.ipynb
-│   │   ├── to_csv.py
-│   │   └── weather_exploration.ipynb
 │   ├── ml_models
-│   │   ├── predict.py
-│   │   ├── preprocessing.py
-│   │   ├── train_lightgbm.py
-│   │   ├── train_lightgbm_without.py
-│   │   ├── train_xgboost.py
-│   │   └── train_xgboost_without.py
 │   ├── streamlit
 │   │   ├── calulcations
-│   │   │   ├── direct_helper.py
-│   │   │   ├── direct_trains.py
-│   │   │   ├── overview.py 
-│   │   │   ├── predict_helper.py
-│   │   │   └── worst_stations.py
 │   │   ├── pages
 │   │   └── main.py
 │   ├── weatherdata
 │   │   ├── data_scraping
-│   │   │   ├── scrapedData
-│   │   │   ├── json-schema.json
-│   │   │   └── scraping.js
 │   │   └── stationsextraction
 │   └── init.py
 ├── requirements.txt
